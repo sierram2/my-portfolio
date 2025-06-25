@@ -1,0 +1,217 @@
+@import url('https://api.fontshare.com/css?f[]=satoshi@400,500,600,700&display=swap');
+
+body {
+  font-family: 'Satoshi', monospace;
+  font-weight: 400;  /* normal / light */
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+  background: #f8f8f8;
+  color: #2d2d2d;
+}
+
+/* Shared layout wrapper for consistent left alignment */
+.content-wrapper {
+  padding-left: 4rem;   /* <<< THIS controls how far content is from left */
+  padding-right: 4rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Header sticks and is aligned using .content-wrapper inside it */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: #c2d3ff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.sticky-header .content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+#glitter-name {
+  position: relative;
+  cursor: pointer;
+  color: #002FA7;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0;
+  font-family: 'Satoshi',  sans-serif;
+
+}
+
+#glitter-name:hover {
+  animation: wiggle 0.3s ease-in-out;
+}
+
+#glitter-name-link {
+  text-decoration: none;
+}
+
+#glitter-name-link:hover {
+  text-decoration: none;
+}
+
+.glitter-dot {
+  position: absolute;
+  width: var(--size, 3px);
+  height: var(--size, 3px);
+  border-radius: 50%;
+  background: radial-gradient(circle at center, #fff, #bbb);
+  filter: drop-shadow(0 0 4px #fff);
+  opacity: var(--opacity, 0.8);
+  pointer-events: none;
+  animation: glitter-up 1.2s forwards;
+}
+
+@keyframes glitter-up {
+  0% {
+    opacity: var(--opacity, 0.8);
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--x, 0), var(--y, -20px)) scale(0.3);
+  }
+}
+
+.profile-photo-header img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: opacity 0.4s ease;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .profile-photo-header img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Nav styles */
+#main-nav {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+#main-nav a {
+  font-weight: 300;
+  color: #002FA7;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+
+#main-nav a.active {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+#main-nav a:hover {
+  background-color: #dde7ff;
+}
+
+/* Hero section with image and text */
+#home-hero {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 3rem;
+  flex-wrap: wrap;
+  margin-top: 4rem;
+}
+
+
+.intro-text {
+  max-width: 800px;
+  flex: 1;
+}
+.intro-container img {
+  width: 250px; /* or any size you like */
+  height: auto; /* keeps the aspect ratio */
+}
+
+.intro-text h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.intro-text p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.intro-photo img {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Section content spacing */
+section {
+  padding: 2rem 0;
+}
+
+/* Align sections too using the same wrapper */
+section .content-wrapper {
+  display: block;
+}
+
+/* Footer and misc */
+footer {
+  text-align: center;
+  padding: 2rem;
+  background: #eee;
+  font-size: 0.9em;
+}
+
+a {
+  color: #002FA7;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#contact-icons {
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.icon-row {
+  display: flex;
+  gap: 20px; /* adjust spacing here */
+}
+
+.icon-row a {
+  color: #002FA7;
+  transition: transform 0.2s ease;
+}
+
+.icon-row a:hover {
+  transform: scale(1.2);
+  color: #000; /* optional darker hover color */
+}

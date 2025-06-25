@@ -3,117 +3,72 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About - Monique Sierra</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <title>Monique Sierra - Portfolio</title>
-  <style>
-    body {
-      font-family: Proxmia Nova, sans-serif;
-      margin: 0;
-      padding: 0;
-      line-height: 1.6;
-      background: #f8f8f8;
-      color: #2d2d2d;
-    }
-  #contact-icons {
-    text-align: center; /* optional: centers icons */
-    padding: 20px;
-  }
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="moon.png">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    once: true
+  });
+</script>
 
-  #contact-icons a {
-    margin: 10px;
-    color: #002FA7;
-    text-decoration: none;
-  }
-
-#contact-icons a:hover {
-  text-decoration: none; /* Prevent underline on icon hover */
-}
-    header {
-      background: #c2d3ff;
-      color: #002FA7;
-      padding: 2rem;
-      text-align: center;
-    }
-<nav style="text-align:center; background: #eee; padding: 1rem; font-size: 1.1rem;">
-  <a href="index.html" style="margin: 0 10px;">Home</a>
-  <a href="about.html" style="margin: 0 10px;">About</a>
-  <a href="projects.html" style="margin: 0 10px;">Projects</a>
-  <a href="contact.html" style="margin: 0 10px;">Contact</a>
-</nav>
-    section {
-      padding: 2rem;
-      max-width: 800px;
-      margin: auto;
-    }
-
-    h1, h2 {
-      color: #002FA7;
-    }
-
-    .project {
-      background: white;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    footer {
-      text-align: center;
-      padding: 2rem;
-      background: #eee;
-      font-size: 0.9em;
-    }
-
-    a {
-      color: #002FA7;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-  </style>
 </head>
 <body>
 
-  <header>
-    <h1>Monique Luna Sierra</h1>
-    
-    <p>Data Analyst | Tea Enthusiast</p>
-  </header>
+<header class="sticky-header">
+  <div class="content-wrapper header-flex">
+    <a href="index.html" id="glitter-name-link">
+      <h1 id="glitter-name">Monique Sierra</h1>
+    </a>
+    <nav id="main-nav">
+      <a href="about.html"class="active">About</a>
+      <a href="projects.html">Projects</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
 
-<section id="about">
-  <h2>About Me</h2>
-  <p>I'm Monique Luna Sierra, a data analyst who thrives on curiosity and creativity. This page goes deeper into my background, philosophy, and favorite teas.</p>
+<section id="home-hero" data-aos="fade-up" class="content-wrapper">
+  <div class="intro-container">
+    <img src=pfp.jpg alt="Monique Luna Sierra">
+  </div>
+  <h1>Hi, my friends call me Mo.</h1>  
+</p>I'm a data analyst here in San Antonio, Texas. </p>
+  
 </section>
 
-  <section id="projects">
-    <h2>Projects</h2>
-    
-    <div class="project">
-      <h3>Portfolio Website</h3>
-      <p>A personal portfolio built with HTML and CSS. <a href="#">View project</a></p>
-    </div>
 
-    <div class="project">
-      <h3>Data Dashboard</h3>
-      <p>An interactive dashboard using Python, Flask, and Chart.js. <a href="#">View project</a></p>
-    </div>
-
+  <section id="about" data-aos="fade-up" class="content-wrapper">
+    <div class="intro-container"> 
+    <h2>if I say "forget" maybe you will remember</h2>
+    <p>With enough boredom, anything is possible.</p>
+    </p>The odds of us you existing are so small; thanks for sharing some seconds with me.</p>
   </section>
 
 <section id="contact-icons">
-  <a href="https://github.com/sierram2" target="_blank"><i class="fab fa-github fa-2x"></i></a>
-  <a href="https://www.linkedin.com/in/monique-s-9b0880176/" target="_blank"><i class="fab fa-linkedin fa-2x"></i></a>
-  <a href="https://open.spotify.com/user/moniquesierra10?si=a2d3423eb8414444" target="_blank"><i class="fab fa-spotify fa-2x"></i></a>
-  <a href="https://www.duolingo.com/profile/squirrrrelss" target="_blank"><i class="fas fa-language fa-2x"></i></a>
-  <a href="mailto:lrsierra03@gmail.com"><i class="fas fa-envelope fa-2x"></i></a>
+  <div class="icon-row">
+    <a href="https://github.com/sierram2" target="_blank"><i class="fab fa-github fa-2x"></i></a>
+    <a href="https://www.linkedin.com/in/monique-s-9b0880176/" target="_blank"><i class="fab fa-linkedin fa-2x"></i></a>
+    <a href="https://open.spotify.com/user/moniquesierra10" target="_blank"><i class="fab fa-spotify fa-2x"></i></a>
+    <a href="https://www.duolingo.com/profile/squirrrrelss" target="_blank"><i class="fas fa-language fa-2x"></i></a>
+    <a href="mailto:lrsierra03@gmail.com"><i class="fas fa-envelope fa-2x"></i></a>
+  </div>
 </section>
-
 
   <footer>
     &copy; 2025 Monique Luna Sierra. All rights reserved.
   </footer>
 
+  <!-- Load animations + sparkle script -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init();
+  </script>
+  <script src="script.js"></script>
 </body>
 </html>
