@@ -4,18 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>About - Monique Sierra</title>
+
+  <!-- Styles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="moon.png">
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>
-  AOS.init({
-    duration: 800,
-    once: true
-  });
-</script>
 
+  <!-- PyScript -->
+  <link rel="stylesheet" href="https://pyscript.net/releases/2025.5.1/core.css" />
+  <script type="module" src="https://pyscript.net/releases/2025.5.1/core.js"></script>
+
+  <!-- AOS (Animate on Scroll) -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 800,
+      once: true
+    });
+  </script>
 </head>
 <body>
 
@@ -25,7 +32,7 @@
       <h1 id="glitter-name">Monique Sierra</h1>
     </a>
     <nav id="main-nav">
-      <a href="about.html"class="active">About</a>
+      <a href="about.html" class="active">About</a>
       <a href="projects.html">Projects</a>
       <a href="blog.html">Blog</a>
       <a href="contact.html">Contact</a>
@@ -35,20 +42,38 @@
 
 <section id="home-hero" data-aos="fade-up" class="content-wrapper">
   <div class="intro-container">
-    <img src=pfp.jpg alt="Monique Luna Sierra">
+    <h1>Hi, my friends call me Mo.</h1>
+    <img src="pfp.jpg" alt="Monique Luna Sierra">
+    <h2>With enough boredom, anything is possible.</h2>
+    <p>
+      I’m a data analyst based in San Antonio, Texas, with a passion for making 
+      sense of complex information and turning it into meaningful insights. 
+      Outside of work, I’m a lifelong soccer player, a tea enthusiast, 
+      and a proud dog mom to two lovable pups.
+    </p>
+    <p>
+      Whether I’m on the field, coding in Python, or sipping jasmine green tea, 
+      I’m always looking for ways to learn, grow, and connect.
+    </p>
   </div>
-  <h1>Hi, my friends call me Mo.</h1>  
-</p>I'm a data analyst here in San Antonio, Texas. </p>
-  
 </section>
 
+<!-- 👇 PyScript Output Section -->
+<section class="content-wrapper">
+  <h2>Python Output Demo</h2>
+  <div id="python-output" style="background: #f4f4f4; padding: 1em; border-radius: 8px; font-family: monospace;"></div>
 
-  <section id="about" data-aos="fade-up" class="content-wrapper">
-    <div class="intro-container"> 
+  <py-script output="python-output">
+print("hello, world")
+  </py-script>
+</section>
+
+<section id="about" data-aos="fade-up" class="content-wrapper">
+  <div class="intro-container"> 
     <h2>if I say "forget" maybe you will remember</h2>
-    <p>With enough boredom, anything is possible.</p>
-    </p>The odds of us you existing are so small; thanks for sharing some seconds with me.</p>
-  </section>
+    <p>The odds of you existing are so small; thanks for sharing some seconds with me.</p>
+  </div>
+</section>
 
 <section id="contact-icons">
   <div class="icon-row">
@@ -60,15 +85,12 @@
   </div>
 </section>
 
-  <footer>
-    &copy; 2025 Monique Luna Sierra. All rights reserved.
-  </footer>
+<footer>
+  &copy; 2025 Monique Luna Sierra. All rights reserved.
+</footer>
 
-  <!-- Load animations + sparkle script -->
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>
-    AOS.init();
-  </script>
-  <script src="script.js"></script>
+<!-- ✨ Custom JS (glitter and redirect) -->
+<script src="script.js"></script>
+
 </body>
 </html>

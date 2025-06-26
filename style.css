@@ -2,12 +2,13 @@
 
 body {
   font-family: 'Satoshi', monospace;
-  font-weight: 400;  /* normal / light */
+  font-weight: 400;
   margin: 0;
   padding: 0;
-  line-height: 1;
+  line-height: 1.6;
   background: #f8f8f8;
   color: #2d2d2d;
+  font-size: 20px; /* <-- Add this line */
 }
 
 /* Shared layout wrapper for consistent left alignment */
@@ -127,9 +128,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 3rem;
+  gap: 1rem;
   flex-wrap: wrap;
-  margin-top: 4rem;
+  margin-top: 1.5rem;
 }
 
 
