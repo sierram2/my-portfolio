@@ -58,14 +58,20 @@
   </div>
 </section>
 
-<!-- 👇 PyScript Output Section -->
 <section class="content-wrapper">
   <h2>Python Output Demo</h2>
-  <div id="python-output" style="background: #f4f4f4; padding: 1em; border-radius: 8px; font-family: monospace;"></div>
 
-  <py-script output="python-output">
-print("hello, world")
-  </py-script>
+  <script type="py">
+    from pyscript import display
+    from datetime import datetime
+
+    now = datetime.now()
+    # Target the div with id "python-output"
+    display("hello world", target="python-output")
+    display(now.strftime("%m/%d/%Y, %H:%M:%S"), target="python-output")
+  </script>
+
+  <div id="python-output" style="background: #f4f4f4; padding: 1em; border-radius: 8px; font-family: monospace;"></div>
 </section>
 
 <section id="about" data-aos="fade-up" class="content-wrapper">
@@ -89,7 +95,6 @@ print("hello, world")
   &copy; 2025 Monique Luna Sierra. All rights reserved.
 </footer>
 
-<!-- ✨ Custom JS (glitter and redirect) -->
 <script src="script.js"></script>
 
 </body>
