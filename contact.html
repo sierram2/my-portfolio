@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>About - Monique Sierra</title>
+  <title>Contact - Monique Sierra</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
   <link rel="stylesheet" href="style.css">
@@ -21,14 +21,14 @@
 
 <header class="sticky-header">
   <div class="content-wrapper header-flex">
-    <a href="index.html" id="glitter-name-link">
-      <h1 id="glitter-name">Monique Sierra</h1>
-    </a>
+<a href="index.html" id="glitter-name-link" class="glitter-name-with-moon">
+  <img src="moon.gif" alt="Moon GIF" class="moon-gif">
+  <h1 id="glitter-name">Monique Sierra</h1>
+</a>
     <nav id="main-nav">
-      <a href="about.html">About</a>
       <a href="projects.html">Projects</a>
       <a href="blog.html">Blog</a>
-      <a href="mailto:lrsierra03@gmail.com?subject=Hi%20Bitch&body=I%20just%20took%20the%20biggest%20shit">Contact</a>
+      <a href="mailto:lrsierra03@gmail.com?subject=Hello%20From%20the%20Void" class="active">Contact</a>
     </nav>
   </div>
 </header>
@@ -39,6 +39,28 @@
     <p>Your delicate, little online footprint made it's way to my heart... don't be a stranger. </p>
   </section>
 
+<!-- modify this form HTML and place wherever you want your form -->
+<section class="content-wrapper" id="contact-form" data-aos="fade-up">
+  <h2>Send Me a Note</h2>
+  <form action="https://formspree.io/f/xgvyryjp" method="POST">
+    <label for="name">Your Name</label><br>
+    <input type="text" id="name" name="name" required><br><br>
+
+    <label for="email">Your Email</label><br>
+    <input type="email" id="email" name="_replyto" required><br><br>
+
+    <label for="message">Your Message</label><br>
+    <textarea id="message" name="message" rows="6" required></textarea><br><br>
+
+    <button type="submit">Send Message</button>
+  </form>
+</section>
+
+<div class="resume-download">
+  <a href="SierraResume25.pdf" download class="resume-link">
+    <i class="fas fa-download"></i> grab my resume on the way out
+  </a>
+</div>
 <section id="contact-icons">
   <div class="icon-row">
     <a href="https://github.com/sierram2" target="_blank"><i class="fab fa-github fa-2x"></i></a>
@@ -50,7 +72,7 @@
 </section>
 
   <footer>
-    &copy; 2025 Monique Luna Sierra. All rights reserved.
+  <p>made with 🍵 by Monique Sierra</p>
   </footer>
 
   <!-- Load animations + sparkle script -->

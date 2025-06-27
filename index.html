@@ -3,46 +3,68 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>About - Monique Sierra</title>
+  <title>Home - Monique Sierra</title>
+
+  <!-- Fonts + Icons -->
+  <link href="https://api.fontshare.com/css?f[]=satoshi@400,500,600,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
-  <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="moon.png">
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>
-  AOS.init({
-    duration: 800,
-    once: true
-  });
-</script>
 
+  <!-- AOS Scroll Animations -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration: 800, once: true });
+  </script>
+    <!-- PyScript -->
+  <link rel="stylesheet" href="https://pyscript.net/releases/2025.5.1/core.css" />
+  <script type="module" src="https://pyscript.net/releases/2025.5.1/core.js"></script>
 
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <header class="sticky-header">
   <div class="content-wrapper header-flex">
-    <a href="index.html" id="glitter-name-link">
-      <h1 id="glitter-name">Monique Sierra</h1>
-    </a>
+<a href="index.html" id="glitter-name-link" class="glitter-name-with-moon">
+  <img src="moon.gif" alt="Moon GIF" class="moon-gif">
+  <h1 id="glitter-name">Monique Sierra</h1>
+</a>
     <nav id="main-nav">
-      <a href="about.html">About</a>
       <a href="projects.html">Projects</a>
       <a href="blog.html">Blog</a>
       <a href="contact.html">Contact</a>
     </nav>
   </div>
 </header>
-<section id="home-hero" data-aos="fade-up" class="content-wrapper">
+
+<section id="home-hero" class="content-wrapper" data-aos="fade-up">
   <div class="intro-container">
+    <div class="intro-photo">
+      <img src="pfp.jpg" alt="Monique Sierra">
+    </div>
     <div class="intro-text">
-      <h1>Hello, I'm Monique.</h1>
-
-      <p>Data scientist working in healthcare here in San Antonio, Texas.</p>
-
+    <h1 class="fade-in-left">writing witty headers is hard.</h1>
+      <p>Lucky for me, healthcare data doesn't judge my lack of originality.</p>
+       
+      <p>As a data scientist, my strengths involve asking questions, diving into data, and solving problems. 
+        Understanding the "why" within the data and finding it's story is where I excel.
+      </p>
+      <p>Let the data do the talking. </p>
       <a href="projects.html" class="cta-button">View My Work</a>
     </div>
   </div>
 </section>
+
+
+<section id="home" data-aos="fade-up" class="content-wrapper">
+  <div class="intro-container"> 
+    <h2>if I say "forget" maybe you will remember</h2>
+    <p>The odds of you existing are so small; thanks for sharing some seconds with me.</p>
+  </div>
+</section>
+
 
 <section id="contact-icons">
   <div class="icon-row">
@@ -54,15 +76,12 @@
   </div>
 </section>
 
-  <footer>
-    &copy; 2025 Monique Sierra. All rights reserved.
-  </footer>
+<footer>
+  <p>made with 🍵 by Monique Sierra</p>
+</footer>
 
-  <!-- Load animations + sparkle script -->
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>
-    AOS.init();
-  </script>
-  <script src="script.js"></script>
+<!-- Optional: Sparkle or Custom JS -->
+<script src="script.js"></script>
+
 </body>
 </html>
