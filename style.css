@@ -7,7 +7,7 @@ body {
   padding: 0;
   line-height: 1.6;
   background: #f8f8f8;
-  color: #2d2d2d;
+  color: #3B2C29;
   font-size: 20px; /* <-- Add this line */
 }
 
@@ -24,7 +24,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 999;
-  background: #c2d3ff;
+  background: #7095f3ac;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
@@ -39,7 +39,7 @@ body {
 #glitter-name {
   position: relative;
   cursor: pointer;
-  color: #002FA7;
+  color: #ffffff;
   font-size: 2.5rem;
   font-weight: bold;
   margin: 0;
@@ -107,7 +107,7 @@ body {
 
 #main-nav a {
   font-weight: 300;
-  color: #002FA7;
+  color: #ffffff;
   text-decoration: none;
   padding: 8px 16px;
   border-radius: 8px;
@@ -120,7 +120,7 @@ body {
 }
 
 #main-nav a:hover {
-  background-color: #dde7ff;
+  background-color: #7095F3;
 }
 
 /* Hero section with image and text */
@@ -226,12 +226,12 @@ section .content-wrapper {
 footer {
   text-align: center;
   padding: 2rem;
-  background: #eee;
+  background: #ffef9e;
   font-size: 0.9em;
 }
 
 a {
-  color: #002FA7;
+  color: #cb3b21;
   text-decoration: none;
 }
 
@@ -257,18 +257,18 @@ a:hover {
 }
 
 .icon-row a {
-  color: #002FA7;
+  color: #cb3b21;
   transition: transform 0.2s ease;
 }
 
 .icon-row a:hover {
   transform: scale(1.2);
-  color: #000; /* optional darker hover color */
+  color: #7095f3ac; /* optional darker hover color */
 }
 
 .italic-tagline {
   opacity: 0.9;
-  color: #002FA7;
+  color: #cb3b21;
 }
 
 .fade-in-left {
@@ -308,7 +308,7 @@ a:hover {
 
 #contact-form button {
   padding: 12px 24px;
-  background-color: #002FA7;
+  background-color: #cb3b21;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -317,7 +317,7 @@ a:hover {
 }
 
 #contact-form button:hover {
-  background-color: #4459c5;
+  background-color: #7095f3ac;
 }
 
 .glitter-name-with-moon {
@@ -348,7 +348,7 @@ a:hover {
 .resume-link {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #002FA7;
+  background-color: #7095F3;
   color: #ffffff;
   font-weight: 600;
   border-radius: 8px;
@@ -357,7 +357,7 @@ a:hover {
 }
 
 .resume-link:hover {
-  background-color: #002FA7;
+  background-color: #cb3b21;
 }
 .resume-download {
   display: flex;
@@ -368,7 +368,7 @@ a:hover {
 .resume-link {
   display: inline-block;
   padding: 12px 24px;
-  background-color: #000000;
+  background-color: #3B2C29;
   color: #ffffff;
   font-weight: 600;
   border-radius: 8px;
@@ -378,9 +378,24 @@ a:hover {
 }
 
 .resume-link:hover {
-  background-color: #002fa7af;
+  background-color: #3B2C29;
 }
 
 .resume-link i {
   margin-right: 8px;
+}
+
+.icon-row a {
+  color: #cb3b21;
+  transition: transform 0.4s ease;
+  animation: floatIcon 3s ease-in-out infinite;
+}
+
+@keyframes floatIcon {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
 }
