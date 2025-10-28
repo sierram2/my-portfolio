@@ -71,10 +71,25 @@
     display(now.strftime("%m/%d/%Y, %H:%M:%S"), target="python-output")
   </script>
 
+  
 
-  <div id="python-output" style="background: #f4f4f4; padding: 1em; border-radius: 8px; font-family: monospace;"></div>
+
+  <div id="python-output" style="background: #f4f4f420; padding: 1em; border-radius: 8px; font-family: monospace;"></div>
 </section>
   
+<section id="about" data-aos="fade-up" class="content-wrapper">
+  <div class="intro-container">
+    <h2>Data Analysis Examples</h2>
+
+    <!-- Dynamic Flask data goes here -->
+    <div class="data-section">
+      {{ data | safe }}
+    </div>
+
+  </div>
+</section>
+
+
 
 <section id="contact-icons">
   <div class="icon-row">

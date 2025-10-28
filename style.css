@@ -6,81 +6,84 @@ body {
   margin: 0;
   padding: 0;
   line-height: 1.6;
-  background: #f8f8f8;
-  color: #3B2C29;
-  font-size: 20px; /* <-- Add this line */
+  background: #1c1c1c; /* slightly lighter than #1a1a1a */
+  color: #ffffff;
+  font-size: 20px;
 }
 
-/* Shared layout wrapper for consistent left alignment */
+h1, h2, h3, h4, h5, h6 {
+  color: #e5e5e5; /* slightly lighter gray */
+}
+
 .content-wrapper {
-  padding-left: 4rem;   /* <<< THIS controls how far content is from left */
+  padding-left: 4rem;
   padding-right: 4rem;
   max-width: 1000px;
   margin: 0 auto;
 }
 
-/* Header sticks and is aligned using .content-wrapper inside it */
 .sticky-header {
   position: sticky;
   top: 0;
   z-index: 999;
-  background: #7095f3ac;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  background: #343434; /* slightly lighter gray */
 }
 
 .sticky-header .content-wrapper {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
+  padding: 1.5rem 0;
 }
 
-#glitter-name {
-  position: relative;
-  cursor: pointer;
-  color: #ffffff;
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin: 0;
-  font-family: 'Satoshi',  sans-serif;
-
-}
-
+/* ---- GLITTER FIX ---- */
 #glitter-name:hover {
   animation: wiggle 0.3s ease-in-out;
 }
 
-#glitter-name-link {
-  text-decoration: none;
+.glitter-container {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
 }
 
-#glitter-name-link:hover {
-  text-decoration: none;
-}
-
+/* Each dot will start from text center */
 .glitter-dot {
   position: absolute;
+  top: 50%;
+  left: 50%;
   width: var(--size, 3px);
   height: var(--size, 3px);
   border-radius: 50%;
-  background: radial-gradient(circle at center, #fff, #bbb);
+  background: radial-gradient(circle at center, #fff, #ffffff);
   filter: drop-shadow(0 0 4px #fff);
   opacity: var(--opacity, 0.8);
   pointer-events: none;
-  animation: glitter-up 1.2s forwards;
+  transform: translate(-50%, -50%); /* keeps glitter centered */
+  animation: glitter-up 1.2s ease-out forwards;
+  z-index: 1;
 }
 
 @keyframes glitter-up {
   0% {
     opacity: var(--opacity, 0.8);
-    transform: translate(0, 0) scale(1);
+    transform: translate(-50%, -50%) scale(1);
   }
   100% {
     opacity: 0;
-    transform: translate(var(--x, 0), var(--y, -20px)) scale(0.3);
+    transform: translate(
+      calc(-50% + var(--x, 0px)),
+      calc(-50% + var(--y, -20px))
+    ) scale(0.3);
   }
 }
+
+/* Keep text on top of sparkles */
+#glitter-name {
+  position: relative;
+  z-index: 2;
+}
+
 
 .profile-photo-header img {
   width: 60px;
@@ -90,7 +93,6 @@ body {
   transition: opacity 0.4s ease;
 }
 
-/* Responsive tweaks */
 @media (max-width: 768px) {
   .profile-photo-header img {
     width: 40px;
@@ -98,7 +100,6 @@ body {
   }
 }
 
-/* Nav styles */
 #main-nav {
   display: flex;
   gap: 20px;
@@ -120,10 +121,9 @@ body {
 }
 
 #main-nav a:hover {
-  background-color: #7095F3;
+  background-color: #4a4a4a; /* lighter hover gray */
 }
 
-/* Hero section with image and text */
 #home-hero {
   display: flex;
   align-items: center;
@@ -133,14 +133,17 @@ body {
   margin-top: 1.5rem;
 }
 
+.intro-container {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
 
 .intro-text {
   max-width: 800px;
   flex: 1;
-}
-.intro-container img {
-  width: 250px; /* or any size you like */
-  height: auto; /* keeps the aspect ratio */
+  min-width: 250px;
 }
 
 .intro-text h1 {
@@ -160,19 +163,12 @@ body {
   height: 280px;
   object-fit: cover;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
 }
 
 .intro-photo img:hover {
-  transform: scale(1.08);
+  transform: scale(1.06);
   box-shadow: 0 0 18px rgba(0, 0, 0, 0.15);
-}
-
-.intro-container {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  flex-wrap: wrap; /* allow stacking on smaller screens */
 }
 
 @media (max-width: 768px) {
@@ -192,46 +188,24 @@ body {
   }
 }
 
-.intro-photo img {
-  width: 280px;
-  height: 280px;
-  object-fit: cover;
-  border-radius: 12px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-}
-
-.intro-photo img:hover {
-  transform: scale(1.08);
-  box-shadow: 0 0 18px rgba(0, 0, 0, 0.15);
-}
-
-.intro-text {
-  flex: 1;
-  min-width: 250px;
-}
-
-
-/* Section content spacing */
 section {
   padding: 2rem 0;
 }
 
-/* Align sections too using the same wrapper */
 section .content-wrapper {
   display: block;
 }
 
-/* Footer and misc */
 footer {
   text-align: center;
   padding: 2rem;
-  background: #ffef9e;
+  background: #323232; /* lighter footer */
   font-size: 0.9em;
+  color: #ffffff;
 }
 
 a {
-  color: #cb3b21;
+  color: #ffffff;
   text-decoration: none;
 }
 
@@ -241,8 +215,36 @@ a:hover {
 
 .header-flex {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
+}
+
+.header-left {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+#glitter-name {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ffffff;
+  margin: 0;
+}
+
+#main-nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+#main-nav a {
+  color: #ffffff;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+#main-nav a:hover {
+  text-decoration: underline;
 }
 
 #contact-icons {
@@ -253,29 +255,29 @@ a:hover {
 
 .icon-row {
   display: flex;
-  gap: 20px; /* adjust spacing here */
+  gap: 20px;
 }
 
 .icon-row a {
-  color: #cb3b21;
-  transition: transform 0.2s ease;
+  color: #ffffff;
+  transition: transform 0.4s ease;
+  animation: floatIcon 3s ease-in-out infinite;
 }
 
 .icon-row a:hover {
   transform: scale(1.2);
-  color: #7095f3ac; /* optional darker hover color */
 }
 
 .italic-tagline {
   opacity: 0.9;
-  color: #cb3b21;
+  color: #d0d0d0; /* lighter italic tagline */
+  font-style: italic;
 }
 
 .fade-in-left {
   opacity: 0;
   transform: translateX(-30px);
   animation: fadeInLeft 1.5s ease-out forwards;
-  font-style: italic;
 }
 
 @keyframes fadeInLeft {
@@ -300,16 +302,16 @@ a:hover {
   padding: 12px;
   font-size: 1rem;
   margin-bottom: 1rem;
-  border: 1px solid #ccc;
+  border: 1px solid #666; /* slightly lighter border */
   border-radius: 6px;
-  background: #fff;
+  background: #f5f5f5;
   color: #000;
 }
 
 #contact-form button {
   padding: 12px 24px;
-  background-color: #cb3b21;
-  color: #fff;
+  background-color: #4a4a4a; /* lighter gray button */
+  color: #ffffff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -317,13 +319,13 @@ a:hover {
 }
 
 #contact-form button:hover {
-  background-color: #7095f3ac;
+  background-color: #2a2a2a;
 }
 
 .glitter-name-with-moon {
   display: flex;
   align-items: center;
-  gap: 12px; /* spacing between name and moon */
+  gap: 12px;
   text-decoration: none;
 }
 
@@ -335,7 +337,6 @@ a:hover {
   animation: float 4s ease-in-out infinite;
 }
 
-/* Optional: gentle float animation */
 @keyframes float {
   0%, 100% {
     transform: translateY(0px);
@@ -345,20 +346,6 @@ a:hover {
   }
 }
 
-.resume-link {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #7095F3;
-  color: #ffffff;
-  font-weight: 600;
-  border-radius: 8px;
-  text-decoration: none;
-  transition: background 0.3s ease;
-}
-
-.resume-link:hover {
-  background-color: #cb3b21;
-}
 .resume-download {
   display: flex;
   justify-content: center;
@@ -368,7 +355,7 @@ a:hover {
 .resume-link {
   display: inline-block;
   padding: 12px 24px;
-  background-color: #3B2C29;
+  background-color: #4a4a4a; /* lighter button background */
   color: #ffffff;
   font-weight: 600;
   border-radius: 8px;
@@ -378,17 +365,11 @@ a:hover {
 }
 
 .resume-link:hover {
-  background-color: #3B2C29;
+  background-color: #2a2a2a;
 }
 
 .resume-link i {
   margin-right: 8px;
-}
-
-.icon-row a {
-  color: #cb3b21;
-  transition: transform 0.4s ease;
-  animation: floatIcon 3s ease-in-out infinite;
 }
 
 @keyframes floatIcon {
@@ -398,4 +379,25 @@ a:hover {
   50% {
     transform: translateY(-6px);
   }
+}
+
+.data-section {
+  margin-top: 1.5rem;
+  overflow-x: auto;
+}
+
+.data-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.data-table th, .data-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.data-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
 }
