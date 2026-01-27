@@ -1,0 +1,154 @@
+@import url('https://api.fontshare.com/css?f[]=satoshi@400,500,700,900&display=swap');
+
+/* ---- COLOR PALETTE VARIABLES ---- */
+:root {
+  --ink-black: #04080fff;      
+  --glaucous: rgb(67, 145, 255);      /* Light Blue (Default) */
+  --glaucous-dark: #b52020;           /* Dark/Selected Color */
+  --powder-blue: rgb(145, 190, 235);    
+  --pale-sky: rgba(0, 117, 251, 0.346);       
+  --alabaster-grey: rgb(255, 255, 255); 
+}
+
+body {
+  font-family: 'Satoshi', sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  color: var(--ink-black); 
+  background-color: var(--alabaster-grey);
+
+  /* REFINED GRID LOGIC */
+  background-image: 
+    linear-gradient(var(--pale-sky) 1px, transparent 1px), 
+    linear-gradient(90deg, var(--pale-sky) 1px, transparent 1px);
+  background-size: 45px 45px;
+  
+  /* Try removing 'fixed' if the grid looks distorted during scroll */
+  background-attachment: scroll; 
+  
+  font-size: 22px; 
+  font-weight: 500;
+}
+
+header, main, section, footer, .content-wrapper {
+  background: transparent !important;
+}
+
+.content-wrapper {
+  padding: 1rem 2.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ---- FROSTED HEADER ---- */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: rgba(255, 255, 255, 0.451) !important; 
+  backdrop-filter: blur(15px);
+}
+
+.sticky-header .content-wrapper {
+  padding: 0.5rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ---- NO UNDERLINES ---- */
+a, #home-link, #site-title {
+  text-decoration: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* ---- THE NAME ---- */
+#site-title {
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--glaucous) !important;
+  letter-spacing: -1.5px;
+  transition: color 0.3s ease;
+}
+
+#home-link.active #site-title {
+  color: var(--glaucous-dark) !important;
+}
+
+/* ---- NAVIGATION ---- */
+#main-nav a {
+  color: var(--glaucous) !important;
+  font-weight: 900;
+  font-size: 1.2rem;
+  margin-left: 2rem;
+  transition: color 0.3s ease;
+}
+
+#main-nav a.active {
+  color: var(--glaucous-dark) !important;
+}
+
+#main-nav a:hover, #home-link:hover #site-title {
+  color: var(--glaucous-dark) !important;
+}
+
+/* ---- SOCIAL ICONS ---- */
+#contact-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding-top: 3rem;
+}
+
+.icon-row {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.icon-row a {
+  color: var(--glaucous);
+  transition: transform 0.3s ease;
+}
+
+.icon-row a:hover {
+  transform: translateY(-5px);
+  color: var(--glaucous-dark);
+}
+
+/* ---- FOOTER & TEA ICON ---- */
+footer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center;
+  padding: 2rem 0 5rem 0;
+}
+
+footer p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-weight: 700;
+  color: var(--ink-black);
+  opacity: 0.6;
+  /* Keeps text color solid while icon blends */
+  isolation: isolate; 
+}
+
+.footer-icon {
+  height: 1.4em;
+  width: auto;
+  margin: 0 8px;
+  /* Makes the white background of the image transparent */
+  mix-blend-mode: multiply; 
+  display: inline-block;
+  vertical-align: middle;
+}

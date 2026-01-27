@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Projects - Monique Sierra{% endblock %}
+
+{% block head_extra %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<section id="about" data-aos="fade-up" class="content-wrapper">
+  <div class="intro-container">
+    <h2>Data Analysis Examples</h2>
+    <p>Links to GitHub projects or interactive examples</p>
+  </div>
+</section>
+
+<section class="content-wrapper" data-aos="fade-up">
+  <h2>Active Users (Last 30 Days)</h2>
+
+  <canvas id="activeUsersChart" height="200" 
+    style="background: #2a2a2a; border-radius: 8px; padding: 1em;">
+  </canvas>
+
+  <script>
+    fetch("/api/active-users")
+      .then(response => response.json())
+      .then(data => {
+        const labels = data.map(d => 
+          new Date(d.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+        );
+        const values = data.map(d => d.active_users);
+
+        new Chart(document.getElementById("activeUsersChart"), {
+          type: "bar",
+          data: {
+            labels,
+            datasets: [{
+              label: "Active Users",
+              data: values,
+              backgroundColor: "gold",
+              borderColor: "goldenrod",
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, ticks: { precision: 0, color: "#fff" } },
+              x: { ticks: { color: "#fff" } }
+            }
+          }
+        });
+      })
+      .catch(err => console.error("Error fetching active users:", err));
+  </script>
+</section>
+
+{% endblock %}
