@@ -6,3 +6,5 @@ Thumbs.db
 google_key.json
 venv/
 __pycache__/
+venv/
+.env

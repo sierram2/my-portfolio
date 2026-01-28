@@ -1,34 +1,44 @@
 {% extends "base.html" %}
-{% block title %}Home - Monique Sierra{% endblock %}
+{% block title %}Monique Sierra | Data Scientist{% endblock %}
 
 {% block content %}
 <section id="home-hero" class="content-wrapper" data-aos="fade-up">
-  <div class="intro-container">
-    <div class="intro-photo">
-      <img src="{{ url_for('static', filename='images/pfp.jpg') }}" alt="Monique Sierra">
+    <div class="hero-main">
+        <div class="intro-header-align">
+            <h1>
+                <img src="{{ url_for('static', filename='images/transparent_cartoon_me.png') }}" 
+                     alt="Monique" class="inline-cartoon">
+                Hi, my name is Monique
+            </h1>
+        </div>
+        
+        <h2 class="hero-subtitle">but you can call me mo </h2>
+
+        <div class="hero-description">
+            <p class="lead-text">
+                <em>just another website to clog up the pipes of the internet</em> 
+            </p>
+
+            <p>
+                Currently, I’m a **Data Scientist at UT Health San Antonio**, working within the Office of Strategic Planning. I spend my days deep in prescriptive and predictive analytics, forecasting healthcare needs to ensure our city stays ahead of patient trends.
+            </p>
+
+            <p>
+                When I’m not translating data into strategy, I’m likely drinking Turkish tea, losing my Duolingo streak, or haunting my own Spotify wrapped.
+            </p>
+            
+            <div class="cta-area">
+                <a href="/projects" class="cta-button">Explore Projects</a>
+                <a href="/blog" class="cta-secondary">Read my Thoughts</a>
+            </div>
+        </div>
     </div>
-
-    <div class="intro-text">
-      <h1 class="fade-in-left">Hello, welcome to the site!</h1>
-
-      <p>Words are so terribly hard to use! Until you can download my unfiltered thoughts into a tube, let me use these crude letters to introduce myself.</p>
-
-      <p>I am a data scientist at UT Health in the Office of Strategic Planning. Passionate about analyzing patient trends to forecast San Antonio's healthcare needs using prescriptive and predictive analytics.</p>
-
-      <p>Turkish tea enthusiast, dedicated Duolingo learner, and Spotify stalker.</p>
-
-      <p>As you're reading this, you're creating data for us to analyze, why don't you take a peek?</p>
-
-      <a href="/projects" class="cta-button">View My Work</a>
-    </div>
-  </div>
 </section>
 
-<section id="home-intro" data-aos="fade-up" class="content-wrapper">
-  <div class="intro-container">
-    <h2>if I say "forget" maybe you will remember</h2>
-    <p>The odds of you existing are so small; thanks for sharing some seconds with me.</p>
-  </div>
+<section id="home-quote" data-aos="fade-up" class="content-wrapper">
+    <div class="quote-container">
+        <hr class="section-divider">
+        <p class="sub-quote">The odds of you existing are mathematically infinitesimal; thanks for sharing a few of your seconds with me.</p>
+    </div>
 </section>
-
 {% endblock %}

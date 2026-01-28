@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "title": "Data Analytics Dashboard",
+    "description": "Interactive site traffic visualization using GA4 and Chart.js.",
+    "tech": ["Python", "Flask", "GA4"],
+    "github": "https://github.com/sierram2"
+  },
+  {
+    "id": 2,
+    "title": "Portfolio Site",
+    "description": "Custom blueprint-themed portfolio with integrated Google Analytics.",
+    "tech": ["CSS", "Jinja2", "JavaScript"],
+    "github": "https://github.com/sierram2"
+  },
+
+  {
+  "id": 3,
+  "title": "Live Traffic Analysis",
+  "description": "A blog post exploring the integration of GA4 API with Python.",
+  "tech": ["API", "GA4", "Data Viz"],
+  "github": "https://github.com/sierram2/my-portfolio",
+  "link": "/blog/ga4-report"
+}
+
+]

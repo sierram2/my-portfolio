@@ -15,46 +15,26 @@
   </div>
 </section>
 
-<section class="content-wrapper" data-aos="fade-up">
-  <h2>Active Users (Last 30 Days)</h2>
+<section class="content-wrapper">
+  <div class="project-grid">
+    {% for project in projects %}
+    <div class="project-card" data-aos="fade-up">
+      <div class="project-header">
+        <h3>{{ project.title }}</h3>
+        <span class="project-id">#0{{ project.id }}</span>
+      </div>
+      <p>{{ project.description }}</p>
+      <div class="tech-stack">
+        {% for tag in project.tech %}
+          <span class="badge">{{ tag }}</span>
+        {% endfor %}
+      </div>
+      <a href="{{ project.github }}" target="_blank" class="project-link">View Repository →</a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
 
-  <canvas id="activeUsersChart" height="200" 
-    style="background: #2a2a2a; border-radius: 8px; padding: 1em;">
-  </canvas>
-
-  <script>
-    fetch("/api/active-users")
-      .then(response => response.json())
-      .then(data => {
-        const labels = data.map(d => 
-          new Date(d.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })
-        );
-        const values = data.map(d => d.active_users);
-
-        new Chart(document.getElementById("activeUsersChart"), {
-          type: "bar",
-          data: {
-            labels,
-            datasets: [{
-              label: "Active Users",
-              data: values,
-              backgroundColor: "gold",
-              borderColor: "goldenrod",
-              borderWidth: 2
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: {
-              y: { beginAtZero: true, ticks: { precision: 0, color: "#fff" } },
-              x: { ticks: { color: "#fff" } }
-            }
-          }
-        });
-      })
-      .catch(err => console.error("Error fetching active users:", err));
-  </script>
 </section>
 
 {% endblock %}

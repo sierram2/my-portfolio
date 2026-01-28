@@ -1,34 +1,25 @@
 @import url('https://api.fontshare.com/css?f[]=satoshi@400,500,700,900&display=swap');
 
-/* ---- COLOR PALETTE VARIABLES ---- */
+/* ---- 1. VARIABLES & BASE ---- */
 :root {
   --ink-black: #04080fff;      
-  --glaucous: rgb(67, 145, 255);      /* Light Blue (Default) */
-  --glaucous-dark: #b52020;           /* Dark/Selected Color */
-  --powder-blue: rgb(145, 190, 235);    
-  --pale-sky: rgba(0, 117, 251, 0.346);       
-  --alabaster-grey: rgb(255, 255, 255); 
+  --glaucous: #4391ff;      /* Light Blue */
+  --glaucous-dark: #b52020;   /* Dark Red */
+  --powder-blue: #91beeb;    
+  --pale-sky: #0075fb58;       
+  --yellow-glow: #fee071;
+  --paper: #ffffff;
 }
 
 body {
-  font-family: 'Satoshi', sans-serif;
-  margin: 0;
-  padding: 0;
-  line-height: 1.6;
-  color: var(--ink-black); 
-  background-color: var(--alabaster-grey);
-
-  /* REFINED GRID LOGIC */
-  background-image: 
-    linear-gradient(var(--pale-sky) 1px, transparent 1px), 
-    linear-gradient(90deg, var(--pale-sky) 1px, transparent 1px);
-  background-size: 45px 45px;
-  
-  /* Try removing 'fixed' if the grid looks distorted during scroll */
-  background-attachment: scroll; 
-  
-  font-size: 22px; 
-  font-weight: 500;
+    background-color: #ffffff; 
+    color: var(--ink-black);
+    margin: 0;
+    padding: 0;
+    font-family: 'Satoshi', sans-serif; 
+    font-size: 1.7rem;   
+    font-weight: 500;    
+    line-height: 1.7;    
 }
 
 header, main, section, footer, .content-wrapper {
@@ -39,14 +30,55 @@ header, main, section, footer, .content-wrapper {
   padding: 1rem 2.5rem;
   max-width: 1200px;
   margin: 0 auto;
+  position: relative; 
 }
 
-/* ---- FROSTED HEADER ---- */
+/* ---- 2. ANIMATED BACKGROUND ---- */
+.background {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background: var(--paper);
+    overflow: hidden;
+    z-index: -1; 
+}
+
+@keyframes move {
+    100% { transform: translate3d(0, 0, 1px) rotate(360deg); }
+}
+
+.background span {
+    width: 15vmin;
+    height: 15vmin;
+    border-radius: 15vmin;
+    backface-visibility: hidden;
+    position: absolute;
+    animation: move linear infinite;
+}
+
+/* Fixed nth-child numbering (starts at 1) */
+.background span:nth-child(1) { color: #fee071; top: 14%; left: 1%; animation-duration: 115s; animation-delay: -90s; transform-origin: 3vw -1vh; box-shadow: 30vmin 0 4vmin currentColor; }
+.background span:nth-child(2) { color: #4391ff; top: 23%; left: 1%; animation-duration: 409s; animation-delay: -159s; transform-origin: 17vw -21vh; box-shadow: 30vmin 0 4vmin currentColor; }
+.background span:nth-child(3) { color: #91beeb; top: 85%; left: 41%; animation-duration: 390s; animation-delay: -101s; transform-origin: 23vw -4vh; box-shadow: 30vmin 0 4vmin currentColor; }
+.background span:nth-child(4) { color: #91beeb; top: 55%; left: 39%; animation-duration: 160s; animation-delay: -316s; transform-origin: 13vw 6vh; box-shadow: -30vmin 0 4vmin currentColor; }
+.background span:nth-child(5) { color: #fee071; top: 77%; left: 26%; animation-duration: 153s; animation-delay: -407s; transform-origin: -6vw -7vh; box-shadow: 30vmin 0 4vmin currentColor; }
+.background span:nth-child(6) { color: #ffffff; top: 43%; left: 99%; animation-duration: 390s; animation-delay: -225s; transform-origin: -1vw 6vh; box-shadow: 30vmin 0 4vmin currentColor; }
+.background span:nth-child(7) { color: #ffffff; top: 55%; left: 53%; animation-duration: 369s; animation-delay: -389s; transform-origin: -12vw -2vh; box-shadow: -30vmin 0 4vmin currentColor; }
+.background span:nth-child(8) { color: #4391ff; top: 23%; left: 59%; animation-duration: 407s; animation-delay: -252s; transform-origin: 15vw 19vh; box-shadow: -30vmin 0 4vmin currentColor; }
+.background span:nth-child(9) { color: #4391ff; top: 35%; left: 71%; animation-duration: 409s; animation-delay: -362s; transform-origin: -3vw -14vh; box-shadow: 30vmin 0 4vmin currentColor; }
+.background span:nth-child(10) { color: #feb4b4; top: 48%; left: 62%; animation-duration: 38s; animation-delay: -88s; transform-origin: -6vw 11vh; box-shadow: 30vmin 0 4.6vmin currentColor; }
+.background span:nth-child(11) { color: #4391ff; top: 12%; left: 43%; animation-duration: 370s; animation-delay: -92s; transform-origin: 9vw -16vh; box-shadow: 30vmin 0 4vmin currentColor; }
+.background span:nth-child(12) { color: #91beeb; top: 80%; left: 44%; animation-duration: 292s; animation-delay: -177s; transform-origin: -15vw -11vh; box-shadow: 30vmin 0 4.4vmin currentColor; }
+.background span:nth-child(13) { color: #feb4b4; top: 97%; left: 86%; animation-duration: 228s; animation-delay: -103s; transform-origin: -17vw 7vh; box-shadow: -30vmin 0 4.5vmin currentColor; }
+
+/* ---- 3. HEADER & NAVIGATION ---- */
 .sticky-header {
   position: sticky;
   top: 0;
   z-index: 999;
-  background: rgba(255, 255, 255, 0.451) !important; 
+  background: rgba(255, 255, 255, 0.45) !important; 
   backdrop-filter: blur(15px);
 }
 
@@ -57,98 +89,178 @@ header, main, section, footer, .content-wrapper {
   align-items: center;
 }
 
-/* ---- NO UNDERLINES ---- */
-a, #home-link, #site-title {
-  text-decoration: none !important;
-  border: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-}
-
-/* ---- THE NAME ---- */
 #site-title {
   font-size: 3rem;
   font-weight: 900;
   color: var(--glaucous) !important;
   letter-spacing: -1.5px;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
+#main-nav a {
+  color: var(--glaucous) !important;
+  font-weight: 900;
+  font-size: 1.5rem;
+  margin-left: 2rem;
+  transition: all 0.3s ease;
+}
+
+/* Updated Hover: Text turns dark blue + Heat Lamp Glow */
+#main-nav a:hover, 
+#home-link:hover #site-title {
+    color: #0056b3 !important; /* This is a deep, rich dark blue */
+    /* Heat lamp depth with your yellow and pink palette */
+    text-shadow: 
+        0 0 25px #fee071, 
+        0 0 35px #fee071;
+        transition: all 0.4s ease-in-out;
+}
+
+#main-nav a.active, 
 #home-link.active #site-title {
   color: var(--glaucous-dark) !important;
 }
 
-/* ---- NAVIGATION ---- */
-#main-nav a {
-  color: var(--glaucous) !important;
-  font-weight: 900;
-  font-size: 1.2rem;
-  margin-left: 2rem;
-  transition: color 0.3s ease;
+a { text-decoration: none !important; }
+
+/* ---- 4. HERO SECTION ---- */
+.intro-header-align h1 {
+    margin: 1rem 0;
+    line-height: 1.1;
 }
 
-#main-nav a.active {
-  color: var(--glaucous-dark) !important;
+.inline-cartoon {
+    height: 1.25em;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.1));
 }
 
-#main-nav a:hover, #home-link:hover #site-title {
-  color: var(--glaucous-dark) !important;
+.hero-subtitle {
+    font-size: 2rem;
+    color: #0075fbaf; /* Your specific blue opacity */
+    font-weight: 700;
+    margin-bottom: 2rem;
 }
 
-/* ---- SOCIAL ICONS ---- */
-#contact-icons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding-top: 3rem;
+.lead-text {
+    font-size: 1.5rem;
+    font-style: italic;
+    opacity: 0.8;
+    margin-bottom: 2rem;
 }
+
+.cta-area {
+    margin-top: 3rem;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.cta-button {
+    background-color: var(--glaucous-dark);
+    color: white !important;
+    padding: 12px 30px;
+    border-radius: 5px;
+    font-weight: 900;
+    font-size: 1.2rem;
+    display: inline-block;
+    transition: all 0.3s ease;
+    box-shadow: 4px 4px 0px var(--pale-sky);
+}
+
+.cta-button:hover {
+    background-color: var(--yellow-glow);
+    color: var(--ink-black) !important;
+    transform: translateY(-3px);
+    box-shadow: 6px 6px 0px var(--glaucous);
+}
+
+.cta-secondary {
+    color: var(--glaucous-dark) !important;
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-decoration: underline !important;
+    transition: opacity 0.3s ease;
+}
+
+/* ---- 5. PROJECTS & CARDS ---- */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+.project-card {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--pale-sky);
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+.project-card:hover {
+  background: white;
+  transform: translateY(-5px);
+  box-shadow: 10px 10px 0px var(--pale-sky);
+}
+
+/* ---- 6. FOOTER & ICONS ---- */
+#contact-icons { padding-top: 3rem; }
 
 .icon-row {
   display: flex;
   justify-content: center;
   gap: 30px;
-  flex-wrap: wrap;
 }
 
 .icon-row a {
   color: var(--glaucous);
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .icon-row a:hover {
   transform: translateY(-5px);
-  color: var(--glaucous-dark);
+  color: var(--yellow-glow);
+  filter: drop-shadow(0 0 2px var(--yellow-glow));
 }
 
-/* ---- FOOTER & TEA ICON ---- */
-footer {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center; 
-  justify-content: center;
-  padding: 2rem 0 5rem 0;
-}
+footer { padding: 2rem 0 5rem 0; }
 
 footer p {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  font-weight: 700;
-  color: var(--ink-black);
-  opacity: 0.6;
-  /* Keeps text color solid while icon blends */
-  isolation: isolate; 
+    max-width: 600px;
+    text-align: center;
+    margin: 0 auto;
+    font-size: 1rem;
+    opacity: 0.7;
 }
 
-.footer-icon {
-  height: 1.4em;
-  width: auto;
-  margin: 0 8px;
-  /* Makes the white background of the image transparent */
-  mix-blend-mode: multiply; 
-  display: inline-block;
-  vertical-align: middle;
+/* ---- 1. UNIFORM TOP SPACING ---- */
+main {
+    padding-top: 5rem; /* This creates the gap across ALL pages */
+    min-height: 50vh;  /* This ensures the footer stays pushed down */
+}
+/* ---- 2. SEMI-TRANSPARENT FOOTER BANNER ---- */
+.footer-banner {
+    position: fixed; /* Anchors it to the viewport */
+    bottom: 0;      /* Sticks it to the bottom */
+    left: 0;
+    z-index: 999;
+    padding: 1rem 0;
+    background: rgba(255, 255, 255, 0.45) !important; /* Semi-transparent for the frost */
+    backdrop-filter: blur(15px);
+    width: 100%;
+}
+
+
+.existential-hook {
+    font-size: 2.2rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+}
+
+.sub-quote {
+    font-size: 1.1rem;
+    opacity: 0.6;
+    font-style: italic;
 }

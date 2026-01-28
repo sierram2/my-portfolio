@@ -2,6 +2,8 @@ from flask import Flask, jsonify, render_template
 from google.oauth2 import service_account
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from analytics.ga_daily import get_active_users_json
+import json  # Import json to read your project file
+import os    # Good for checking if the file exists
 
 app = Flask(__name__)
 
@@ -18,10 +20,21 @@ def active_users():
     df = get_active_users_json(client, PROPERTY_ID)
     return df.to_json(orient="records", date_format="iso")
 
-# Projects page route
+# Projects page route (FIXED for Step 2)
 @app.route("/projects")
 def projects():
-    return render_template("projects.html")
+    # 1. Look for the projects.json file in your root folder
+    json_path = os.path.join(app.root_path, 'projects.json')
+    
+    try:
+        with open(json_path, 'r') as f:
+            project_data = json.load(f)
+    except FileNotFoundError:
+        # Fallback if you haven't created the file yet
+        project_data = []
+
+    # 2. Pass the 'project_data' list to the template as a variable named 'projects'
+    return render_template("projects.html", projects=project_data)
 
 # Dynamic page routing for all other HTML pages
 @app.route("/", defaults={"page": "index"})
@@ -30,7 +43,6 @@ def render_page(page):
     try:
         return render_template(f"{page}.html")
     except:
-        # Optional: log the error here if needed
         return render_template("404.html"), 404
 
 if __name__ == "__main__":
