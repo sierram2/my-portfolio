@@ -29,7 +29,13 @@
           <span class="badge">{{ tag }}</span>
         {% endfor %}
       </div>
-      <a href="{{ project.github }}" target="_blank" class="project-link">View Repository →</a>
+      <a href="{{ url_for('ga4_report') }}" class="your-tab-class">
+    <div class="tab-content">
+        <span class="number">#01</span>
+        <h3>Data Analytics Dashboard</h3>
+        <p>Interactive site traffic visualization using GA4 and Chart.js.</p>
+    </div>
+</a>
     </div>
     {% endfor %}
   </div>

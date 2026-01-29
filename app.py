@@ -45,5 +45,18 @@ def render_page(page):
     except:
         return render_template("404.html"), 404
 
+@app.route("/blog/ga4-report")
+def ga4_report():
+    # Fetch the live data
+    df = get_active_users_json(client, PROPERTY_ID)
+    
+    # --- DEBUG LINE ---
+    print(f"DEBUG: GA4 returned {len(df)} rows of data.")
+    # ------------------
+
+    # Convert to list of dicts for the template
+    report_data = df.to_dict(orient="records")
+    return render_template("ga4_report.html", report=report_data)
+
 if __name__ == "__main__":
     app.run(debug=True)
