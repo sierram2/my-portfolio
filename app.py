@@ -58,5 +58,8 @@ def ga4_report():
     report_data = df.to_dict(orient="records")
     return render_template("ga4_report.html", report=report_data)
 
+from waitress import serve
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    # serve(app, host='0.0.0.0', port=5000)
+    app.run(debug=True) # Keep this for dev, use serve for prod
