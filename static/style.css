@@ -144,13 +144,6 @@ a { text-decoration: none !important; }
     margin-bottom: .5rem;
 }
 
-.lead-text {
-    font-size: 1.6rem;
-    font-style: italic;
-    opacity: 0.8;
-    margin-bottom: .5rem;
-}
-
 .cta-area {
     margin-top: 3rem;
     display: flex;
@@ -332,13 +325,30 @@ textarea {
     text-align: center;
 }
 .metric-card h4 {
-    font-size: 0.9rem;
+    font-size: 3rem;
     color: #666;
     margin: 0;
 }
 .metric-card p {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: bold;
     color: #feb4b4; /* Your Pink */
     margin: 5px 0;
+}
+
+.live-report-container {
+    background: #ffffff;
+    border: 3px solid #1e1896;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+/* This prevents the "cutting through" visual glitch */
+.chart-wrapper {
+    position: relative;
+    height: 500px; /* Increased from 400px for a taller look */
+    width: 100%;
+    margin-top: 20px;
+    overflow: hidden; 
 }
