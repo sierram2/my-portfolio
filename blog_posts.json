@@ -1,0 +1,18 @@
+[
+  {
+    "id": "ga4-report",
+    "title": "Building a Real-Time Analytics Pipeline",
+    "date": "2026-01-28",
+    "description": "Watching for traffic like a submarine sonar ping. Built using GA4's free reporting API, Python on the backend, and Chart.js on the front.",
+    "image": "/static/images/ga4-dashboard.png",
+    "tags": ["Python", "API", "Chart.js", "Google Analytics"]
+  },
+  {
+    "id": "cancer-analysis",
+    "title": "Cancer Data Analysis",
+    "date": "2026-01-15",
+    "description": "Statistical analysis exploring cancer trends and patterns in healthcare data.",
+    "image": "/static/images/cancer-chart.png",
+    "tags": ["Python", "Healthcare", "Data Viz"]
+  }
+]

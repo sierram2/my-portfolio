@@ -3,71 +3,73 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>{% block title %}monique sierra{% endblock %}</title>
+    <title>{% block title %}monique{% endblock %}</title>
 
     <link href="https://api.fontshare.com/css?f[]=satoshi@400,500,600,700,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/moon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     {% block head_extra %}{% endblock %}
 </head>
 <body>
-<div class="background">
-   <span></span><span></span><span></span><span></span><span></span>
-   <span></span><span></span><span></span><span></span><span></span>
-   <span></span><span></span><span></span>
-</div>
-
-  <header class="sticky-header">
-    <div class="content-wrapper header-flex">
-      <div class="header-left">
-        <a href="/" id="home-link">
-          <span id="site-title">monique sierra</span>
-        </a>
-      </div>
-      <nav id="main-nav">
-        <a href="/projects">Projects</a>
-        <a href="/blog">Blog</a>
-        <a href="/contact">Contact</a>
-      </nav>
+    <div class="background">
+       <span></span><span></span><span></span><span></span><span></span>
+       <span></span><span></span><span></span><span></span><span></span>
+       <span></span><span></span><span></span>
     </div>
-  </header>
 
-  <main>
-    {% block content %}{% endblock %}
-  </main>
-
-  <footer class="footer-banner">
-    <div class="content-wrapper">
-        <div class="quote-container" data-aos="fade-up">
-        <div class="icon-row">
-            <a href="https://github.com/sierram2" target="_blank"><i class="fab fa-github fa-2x"></i></a>
-            <a href="https://www.linkedin.com/in/monique-s-9b0880176/" target="_blank"><i class="fab fa-linkedin fa-2x"></i></a>
-            <a href="http://spotify.com" target="_blank"><i class="fab fa-spotify fa-2x"></i></a>
-            <a href="https://www.duolingo.com/profile/squirrrrelss" target="_blank"><i class="fas fa-language fa-2x"></i></a>
-            <a href="mailto:lrsierra03@gmail.com"><i class="fas fa-envelope fa-2x"></i></a>
+    <header class="sticky-header">
+        <div class="content-wrapper">
+            <a href="/" id="home-link"><span id="site-title">monique</span></a>
+            <nav id="main-nav">
+                <a href="/projects">Projects</a>
+                <a href="/blog">Blog</a>
+                <a href="/contact">Contact</a>
+            </nav>
         </div>
-        <p class="angst-tag"></p>
- 
+    </header>
 
-        <p class="angst-tag">© 2026 Monqiue Sierra</p>
-    </div>
-  </footer>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const currentPath = window.location.pathname;
-      const allLinks = document.querySelectorAll('#main-nav a, #home-link');
-      
-      allLinks.forEach(link => {
-        // Remove active class from everything first
-        link.classList.remove('active');
-        // If the link matches the current URL, make it red!
-        if (link.getAttribute('href') === currentPath) {
-          link.classList.add('active');
-        }
-      });
-    });
-  </script>
-  </body>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer-banner">
+        <div class="content-wrapper">
+            <div class="icon-row">
+                <a href="https://github.com/sierram2" target="_blank"><i class="fa-brands fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/monique-s-9b0880176/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="https://open.spotify.com" target="_blank"><i class="fa-brands fa-spotify"></i></a>
+                <a href="https://www.duolingo.com/profile/squirrrrelss" target="_blank"><i class="fa-solid fa-language"></i></a>
+                <a href="mailto:lrsierra03@gmail.com"><i class="fa-solid fa-envelope"></i></a>
+            </div>
+            <p class="angst-tag">© 2026 Monique Sierra</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentPath = window.location.pathname;
+            const allLinks = document.querySelectorAll('#main-nav a');
+            const siteTitle = document.getElementById('site-title');
+            
+            allLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Make site title glow when on home page
+            if (currentPath === '/' || currentPath === '') {
+                siteTitle.classList.add('active');
+            }
+        });
+    </script>
+</body>
 </html>

@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, render_template
 from google.oauth2 import service_account
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
-from analytics.ga_daily import get_active_users_json
+from analytics.ga_daily import get_active_users_json, get_traffic_sources
 import json
 import os 
 
@@ -39,19 +39,39 @@ def projects():
         project_data = []
     return render_template("projects.html", projects=project_data)
 
-# Specific route for the GA4 Report
+# BLOG ROUTES - Must come BEFORE the catch-all route
+@app.route("/blog")
+def blog_index():
+    json_path = os.path.join(app.root_path, 'blog_posts.json')
+    try:
+        with open(json_path, 'r') as f:
+            posts = json.load(f)
+        posts.sort(key=lambda x: x['date'], reverse=True)
+    except FileNotFoundError:
+        posts = []
+    return render_template("blog.html", posts=posts)
+
 @app.route("/blog/ga4-report")
 def ga4_report():
     df = get_active_users_json(client, PROPERTY_ID)
     report_data = df.to_dict(orient="records")
-    return render_template("ga4_report.html", report=report_data)
+    
+    # Get traffic sources from GA4
+    traffic_sources = get_traffic_sources(client, PROPERTY_ID)
+    
+    return render_template("ga4_report.html", 
+                         report=report_data,
+                         sources=traffic_sources)
 
-# Specific route for the Cancer Analysis
 @app.route("/blog/cancer-analysis")
 def cancer_analysis():
     return render_template("cancer_report.html")
 
-# Dynamic page routing for all other HTML pages
+@app.route("/blog/<post_id>")
+def blog_post(post_id):
+    return render_template(f"blog/{post_id}.html")
+
+# Dynamic page routing - This MUST be last since it's a catch-all
 @app.route("/", defaults={"page": "index"})
 @app.route("/<page>")
 def render_page(page):

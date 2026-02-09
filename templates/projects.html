@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Projects - Monique Sierra{% endblock %}
+{% block title %}Portfolio & Case Studies - Monique Sierra{% endblock %}
 
 {% block head_extra %}
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -8,39 +8,36 @@
 
 {% block content %}
 
-<section id="about" data-aos="fade-up" class="content-wrapper">
+<section id="portfolio-header" data-aos="fade-up" class="content-wrapper">
   <div class="intro-container">
-    <h2>Data Analysis Examples</h2>
-    <p>Links to GitHub projects or interactive examples</p>
+    <h2>Data Science Portfolio</h2>
+    <p class="hero-subtitle">What good is messy data?</p>
+    
+    <div style="max-width: 800px; margin-top: 1.5rem;">
+      <p>
+        For one, it keeps me employed. If numbers knew how to arrange and explain themselves, 
+        I’d be out of a job (and still looking for someone to data-analyze my own thoughts for me). 
+      </p>
+      <p>
+        Beyond job security, I find the most value in <strong>translating chaos into clarity</strong>. 
+        This portfolio showcases how I turn raw, unorganized datasets into strategic insights.
+      </p>
+      <p style="font-size: 1.1rem; opacity: 0.8; margin-top: 1rem;">
+        Explore the tiles below to view GitHub repositories, documentation, and analysis reports.
+      </p>
+    </div>
   </div>
 </section>
 
 <section class="content-wrapper">
-  <div class="project-grid">
+  <div class="project-grid-compact">
     {% for project in projects %}
-    <div class="project-card" data-aos="fade-up">
-      <div class="project-header">
-        <h3>{{ project.title }}</h3>
-        <span class="project-id">#0{{ project.id }}</span>
-      </div>
+    <a href="{{ project.link }}" class="project-tile" data-aos="fade-up">
+      <h3>{{ project.title }}</h3>
       <p>{{ project.description }}</p>
-      <div class="tech-stack">
-        {% for tag in project.tech %}
-          <span class="badge">{{ tag }}</span>
-        {% endfor %}
-      </div>
-      <a href="{{ url_for('ga4_report') }}" class="your-tab-class">
-    <div class="tab-content">
-        <span class="number">#01</span>
-        <h3>Data Analytics Dashboard</h3>
-        <p>Interactive site traffic visualization using GA4 and Chart.js.</p>
-    </div>
-</a>
-    </div>
+    </a>
     {% endfor %}
   </div>
-</section>
-
 </section>
 
 {% endblock %}
