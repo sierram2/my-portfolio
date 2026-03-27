@@ -1,40 +1,25 @@
 {% extends "base.html" %}
 
-{% block title %}Portfolio & Case Studies - Monique Sierra{% endblock %}
-
-{% block head_extra %}
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-{% endblock %}
+{% block title %}Projects - Monique Sierra{% endblock %}
 
 {% block content %}
 
-<section id="portfolio-header" data-aos="fade-up" class="content-wrapper">
-  <div class="intro-container">
-    <h2>Data Science Portfolio</h2>
-    <p class="hero-subtitle">What good is messy data?</p>
-    
-    <div style="max-width: 800px; margin-top: 1.5rem;">
-      <p>
-        For one, it keeps me employed. If numbers knew how to arrange and explain themselves, 
-        I’d be out of a job (and still looking for someone to data-analyze my own thoughts for me). 
-      </p>
-      <p>
-        Beyond job security, I find the most value in <strong>translating chaos into clarity</strong>. 
-        This portfolio showcases how I turn raw, unorganized datasets into strategic insights.
-      </p>
-      <p style="font-size: 1.1rem; opacity: 0.8; margin-top: 1rem;">
-        Explore the tiles below to view GitHub repositories, documentation, and analysis reports.
-      </p>
-    </div>
-  </div>
+<section class="content-wrapper intro-header-align" data-aos="fade-up">
+  <h1>projects</h1>
+
+  <p class="hero-subtitle">
+  The data isn't going to analyze itself!  
+  </p>
+
+
 </section>
 
 <section class="content-wrapper">
-  <div class="project-grid-compact">
+  <div class="post-list">
     {% for project in projects %}
-    <a href="{{ project.link }}" class="project-tile" data-aos="fade-up">
-      <h3>{{ project.title }}</h3>
-      <p>{{ project.description }}</p>
+    <a href="{{ project.link }}" class="post-item" data-aos="fade-up">
+      <span class="post-title project-title">{{ project.title }}</span>
+      <p class="post-description">{{ project.description }}</p>
     </a>
     {% endfor %}
   </div>

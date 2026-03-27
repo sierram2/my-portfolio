@@ -1,176 +1,107 @@
 {% extends "base.html" %}
 
-{% block title %}Site Analytics Dashboard - Blog{% endblock %}
+{% block title %}Real-Time Analytics Dashboard — monique sierra{% endblock %}
 
-{% block content %}
-<article class="content-wrapper" data-aos="fade-up">
-    <h1>Real-Time Analytics Dashboard</h1>
-    <p class="post-meta"><i>January 28, 2026 • Google Analytics API</i></p>
-
-    <div class="blog-explanation">
-        <p><strong>Live traffic monitoring powered by GA4</strong></p>
-        <p>
-            This dashboard pulls real-time data from Google Analytics 4 using Python and Flask on the backend, 
-            then visualizes it with Chart.js. Think of it as a submarine's sonar—constantly pinging for activity.
-        </p>
-    </div>
-
-    <!-- Key Metrics Row -->
-    <div class="metrics-row">
-        <div class="metric-card">
-            <h4>Total Visitors</h4>
-            <p id="totalUsers">0</p>
-            <small>Last 30 Days</small>
-        </div>
-        <div class="metric-card">
-            <h4>Daily Average</h4>
-            <p id="avgUsers">0</p>
-            <small>Visitors per Day</small>
-        </div>
-        <div class="metric-card">
-            <h4>Peak Day</h4>
-            <p id="peakDay">—</p>
-            <small id="peakDate">Loading...</small>
-        </div>
-    </div>
-
-    <!-- Main Chart -->
-    <div class="live-report-container">
-        <h3>Daily Active Users (30-Day Rolling Window)</h3>
-        <div class="chart-wrapper">
-            <canvas id="activeUsersChart"></canvas>
-        </div>
-        <p class="chart-note">
-            <small>Data reflects visitors from 48 hours ago to account for GA4 processing delays</small>
-        </p>
-    </div>
-
-    <!-- Traffic Sources Section -->
-    <div class="live-report-container" style="margin-top: 30px;">
-        <h3>Traffic Sources</h3>
-        <div id="sourceBreakdown" class="source-list">
-            <!-- Will be populated by JS -->
-        </div>
-    </div>
-
-    <!-- Tech Stack -->
-    <div class="blog-explanation" style="margin-top: 40px;">
-        <h3>How It Works</h3>
-        <p>
-            <strong>Backend:</strong> Flask app authenticates with Google Analytics using a service account, 
-            queries the GA4 Data API for active user metrics, and formats the response as JSON.
-        </p>
-        <p>
-            <strong>Frontend:</strong> Chart.js renders the data with custom styling. The 30-day window 
-            automatically shifts to exclude the most recent 48 hours (GA4's standard processing time).
-        </p>
-        <p>
-            <strong>Deployment:</strong> Hosted on Render with environment variables storing API credentials securely.
-        </p>
-    </div>
-</article>
-
+{% block head_extra %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 <style>
-    h1 { color: #feb4b4; }
+    /* ── page-local overrides only: layout not covered by style.css ── */
 
-    .blog-explanation h3 {
-        color: #4391ff;
-        margin-top: 2rem;
-        margin-bottom: 1rem;
+    .post-meta {
+        font-size: 18px;
+        color: #666;
+        margin-bottom: 28px;
     }
 
+    /* Metric cards — glass panels, no borders */
     .metrics-row {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 20px;
-        margin-bottom: 30px;
+        margin: 28px 0;
     }
 
     .metric-card {
-        background: #ffffff;
-        border-bottom: 4px solid #fee071;
-        padding: 20px;
-        border-radius: 8px;
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        padding: 24px 20px;
         text-align: center;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        transition: transform 0.2s ease;
+        border-radius: 2px;
+        transition: background 0.15s ease;
     }
-
     .metric-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        background: rgba(255,255,255,0.80);
     }
 
     .metric-card h4 {
-        font-size: 0.9rem;
-        margin: 0 0 10px 0;
+        font-family: var(--font-sans);
+        font-size: 16px;
+        font-weight: normal;
         color: #666;
-        font-weight: 700;
+        margin: 0 0 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
     }
 
-    .metric-card p {
-        font-size: 2.5rem;
-        font-weight: 900;
-        color: #feb4b4;
-        margin: 5px 0;
+    .metric-card .metric-value {
+        font-family: var(--font-sans);
+        font-size: 2.6rem;
+        font-weight: bold;
+        color: var(--red);
+        margin: 4px 0;
+        line-height: 1;
     }
 
-    .metric-card small { 
+    .metric-card small {
+        font-size: 15px;
         color: #999;
-        font-size: 0.85rem;
     }
 
-    .live-report-container {
-        background: #ffffff;
-        border: 2px solid #fee071;
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    /* Chart and source containers — glass, borderless */
+    .report-panel {
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        padding: 28px;
+        border-radius: 2px;
+        margin-bottom: 28px;
     }
 
-    .live-report-container h3 {
-        margin-top: 0;
-        color: #4391ff;
-        font-weight: 900;
+    .report-panel h3 {
+        font-family: var(--font-sans);
+        font-size: 22.5px;
+        font-weight: normal;
+        color: var(--black);
+        margin: 0 0 20px;
+    }
+
+    .chart-wrapper {
+        position: relative;
+        height: 300px;
     }
 
     .chart-note {
         text-align: center;
-        margin-top: 15px;
-        color: #666;
+        margin-top: 14px;
+        font-size: 16px;
+        color: #888;
     }
 
-    .source-list {
-        padding: 10px 0;
-    }
-
+    /* Source list */
     .source-item {
         display: grid;
-        grid-template-columns: 180px 1fr 80px;
+        grid-template-columns: 180px 1fr 60px;
         align-items: center;
-        gap: 15px;
-        padding: 15px 20px;
-        margin-bottom: 10px;
-        background: rgba(254, 224, 113, 0.1);
-        border-left: 4px solid #fee071;
-        border-radius: 4px;
-        font-size: 1.1rem;
-        transition: all 0.2s ease;
-    }
-
-    .source-item:hover {
-        background: rgba(254, 224, 113, 0.2);
-        border-left-color: #feb4b4;
-    }
-
-    .source-item:last-child {
-        margin-bottom: 0;
+        gap: 16px;
+        padding: 12px 0;
     }
 
     .source-name {
-        font-weight: 700;
-        color: #333;
-        font-family: 'Satoshi', sans-serif;
+        font-family: var(--font-sans);
+        font-size: 20px;
+        color: var(--black);
         position: relative;
         cursor: help;
     }
@@ -182,22 +113,19 @@
 
     .tooltip {
         position: absolute;
-        bottom: 100%;
+        bottom: calc(100% + 8px);
         left: 0;
-        margin-bottom: 8px;
         padding: 10px 14px;
-        background: rgba(0, 0, 0, 0.9);
-        color: white;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        font-weight: 500;
+        background: var(--black);
+        color: var(--white);
+        font-size: 15px;
         white-space: nowrap;
         opacity: 0;
         visibility: hidden;
-        transition: all 0.2s ease;
-        z-index: 10;
+        transition: opacity 0.15s ease;
+        z-index: 20;
         pointer-events: none;
-        max-width: 300px;
+        border-radius: 2px;
     }
 
     .tooltip::after {
@@ -206,38 +134,85 @@
         top: 100%;
         left: 20px;
         border: 5px solid transparent;
-        border-top-color: rgba(0, 0, 0, 0.9);
+        border-top-color: var(--black);
     }
 
     .source-bar-container {
         width: 100%;
-        height: 12px;
-        background: rgba(254, 180, 180, 0.15);
-        border-radius: 6px;
+        height: 6px;
+        background: rgba(0,0,0,0.07);
+        border-radius: 0;
         overflow: hidden;
     }
 
     .source-bar-fill {
         height: 100%;
-        background: linear-gradient(90deg, #feb4b4, #fee071);
-        border-radius: 6px;
-        transition: width 0.5s ease;
+        background: var(--black);
+        transition: width 0.6s ease;
     }
 
     .source-count {
-        color: #feb4b4;
-        font-weight: 900;
-        font-family: 'Satoshi', sans-serif;
+        font-family: var(--font-sans);
+        font-size: 18px;
+        color: #666;
         text-align: right;
     }
 </style>
+{% endblock %}
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+{% block content %}
+<article>
+    <div class="intro-header-align">
+        <h1>Real-Time Analytics Dashboard</h1>
+    </div>
+    <p class="post-meta"><i>January 28, 2026 · Google Analytics API</i></p>
+
+    <p><strong>Live traffic monitoring powered by GA4.</strong> This dashboard pulls real-time data from Google Analytics 4 using Python and Flask on the backend, then visualizes it with Chart.js. Think of it as a submarine's sonar — constantly pinging for activity.</p>
+
+    <!-- Key Metrics -->
+    <div class="metrics-row">
+        <div class="metric-card">
+            <h4>Total Visitors</h4>
+            <p class="metric-value" id="totalUsers">0</p>
+            <small>Last 30 Days</small>
+        </div>
+        <div class="metric-card">
+            <h4>Daily Average</h4>
+            <p class="metric-value" id="avgUsers">0</p>
+            <small>Visitors per Day</small>
+        </div>
+        <div class="metric-card">
+            <h4>Peak Day</h4>
+            <p class="metric-value" id="peakDay">—</p>
+            <small id="peakDate">Loading...</small>
+        </div>
+    </div>
+
+    <!-- Main Chart -->
+    <div class="report-panel">
+        <h3>Daily Active Users — 30-Day Rolling Window</h3>
+        <div class="chart-wrapper">
+            <canvas id="activeUsersChart"></canvas>
+        </div>
+        <p class="chart-note">Data reflects visitors from 48 hours ago to account for GA4 processing delays</p>
+    </div>
+
+    <!-- Traffic Sources -->
+    <div class="report-panel">
+        <h3>Traffic Sources</h3>
+        <div id="sourceBreakdown"></div>
+    </div>
+
+    <!-- How It Works -->
+    <h2>How It Works</h2>
+    <p><strong>Backend:</strong> Flask authenticates with Google Analytics via a service account, queries the GA4 Data API for active user metrics, and formats the response as JSON.</p>
+    <p><strong>Frontend:</strong> Chart.js renders the data. The 30-day window automatically shifts to exclude the most recent 48 hours — GA4's standard processing delay.</p>
+    <p><strong>Deployment:</strong> Hosted on Render with environment variables storing API credentials securely.</p>
+</article>
+
 <script>
     const rawData = {{ report | tojson }};
-    
-    // 1. DATA MAP: Create "Month/Day" lookup
+
     const dataMap = {};
     rawData.forEach(d => {
         const dateObj = new Date(d.date);
@@ -247,38 +222,30 @@
 
     const finalLabels = [];
     const finalValues = [];
-    
-    // 2. THE SHIFT: Set the "End Date" to 48 hours ago
+
     const chartEnd = new Date();
     chartEnd.setDate(chartEnd.getDate() - 2);
 
-    // 3. GENERATE 30-DAY WINDOW
     for (let i = 29; i >= 0; i--) {
         const d = new Date(chartEnd);
         d.setDate(chartEnd.getDate() - i);
-        
         const m = d.getMonth() + 1;
         const day = d.getDate();
         const key = `${m}/${day}`;
-        
         finalLabels.push(key);
         finalValues.push(dataMap[key] || 0);
     }
 
-    // 4. CALCULATE STATS
     const total = finalValues.reduce((a, b) => a + b, 0);
     const avg = (total / 30).toFixed(1);
     const peakValue = Math.max(...finalValues);
     const peakIndex = finalValues.indexOf(peakValue);
-    const peakDateLabel = finalLabels[peakIndex];
 
-    // Update DOM
     document.getElementById('totalUsers').innerText = total.toLocaleString();
     document.getElementById('avgUsers').innerText = avg;
     document.getElementById('peakDay').innerText = peakValue;
-    document.getElementById('peakDate').innerText = peakDateLabel;
+    document.getElementById('peakDate').innerText = finalLabels[peakIndex];
 
-    // 5. RENDER LINE CHART
     const ctx = document.getElementById("activeUsersChart").getContext('2d');
     new Chart(ctx, {
         type: "line",
@@ -288,20 +255,20 @@
             datasets: [{
                 label: 'Daily Visitors',
                 data: finalValues,
-                borderColor: "#feb4b4",
-                backgroundColor: "rgba(254, 180, 180, 0.1)",
+                borderColor: "#0a0a0a",
+                backgroundColor: "rgba(10,10,10,0.04)",
                 fill: true,
-                pointBackgroundColor: "#fee071",
-                pointBorderColor: "#feb4b4",
-                pointBorderWidth: 2,
-                tension: 0.4,
-                pointRadius: 5,
-                pointHoverRadius: 7,
+                pointBackgroundColor: "#df2935",
+                pointBorderColor: "#0a0a0a",
+                pointBorderWidth: 1.5,
+                tension: 0.35,
+                pointRadius: 4,
+                pointHoverRadius: 6,
                 datalabels: {
                     align: 'top',
-                    offset: 8,
-                    color: '#feb4b4',
-                    font: { weight: 'bold', size: 12, family: 'Satoshi' },
+                    offset: 6,
+                    color: '#555',
+                    font: { size: 11 },
                     formatter: (value) => (value > 0 ? value : '')
                 }
             }]
@@ -309,80 +276,64 @@
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { 
+            plugins: {
                 legend: { display: false },
                 datalabels: { display: true },
                 tooltip: {
-                    backgroundColor: 'rgba(0,0,0,0.8)',
-                    titleColor: '#fee071',
+                    backgroundColor: '#0a0a0a',
+                    titleColor: '#df2935',
                     bodyColor: '#fff',
-                    titleFont: { family: 'Satoshi', size: 14, weight: 'bold' },
-                    bodyFont: { family: 'Satoshi', size: 13 },
-                    cornerRadius: 8,
-                    padding: 12
+                    cornerRadius: 2,
+                    padding: 10
                 }
             },
             layout: {
-                padding: { top: 30, right: 10, bottom: 10, left: 10 } 
+                padding: { top: 28, right: 8, bottom: 8, left: 8 }
             },
             scales: {
-                y: { 
+                y: {
                     beginAtZero: true,
                     grace: '10%',
-                    grid: { color: "#f0f0f0" },
-                    ticks: { 
-                        stepSize: 1, 
-                        precision: 0,
-                        color: '#666',
-                        font: { size: 13, family: 'Satoshi' }
-                    }
+                    grid: { color: "rgba(0,0,0,0.05)" },
+                    ticks: { stepSize: 1, precision: 0, color: '#888', font: { size: 13 } }
                 },
-                x: { 
+                x: {
                     grid: { display: false },
-                    ticks: { 
-                        color: '#666',
-                        font: { size: 13, family: 'Satoshi' },
-                        maxRotation: 45, 
-                        minRotation: 45, 
-                        maxTicksLimit: 15 
-                    }
+                    ticks: { color: '#888', font: { size: 12 }, maxRotation: 45, minRotation: 45, maxTicksLimit: 15 }
                 }
             }
         }
     });
 
-    // 6. TRAFFIC SOURCES - Real data from GA4
+    // Traffic Sources
     const sourceDataRaw = {{ sources | tojson }};
 
-    // Definitions for tooltips
     const sourceDefinitions = {
         'Direct': 'Users who typed your URL directly or came from bookmarks',
         'Organic Search': 'Unpaid traffic from search engines like Google or Bing',
         'Organic Social': 'Unpaid traffic from social platforms like Twitter, LinkedIn, etc.',
         'Referral': 'Traffic from links on other websites',
-        'Paid Search': 'Paid ads on search engines (Google Ads, etc.)',
+        'Paid Search': 'Paid ads on search engines',
         'Paid Social': 'Paid ads on social platforms',
         'Email': 'Traffic from email campaigns',
-        'Unassigned': 'Traffic that GA4 could not categorize',
+        'Unassigned': 'GA4 could not categorize this traffic',
         '(not set)': 'Traffic without source data'
     };
 
-    // Populate source list with aligned bars and tooltips
     const sourceList = document.getElementById('sourceBreakdown');
     Object.entries(sourceDataRaw).forEach(([name, percent]) => {
-        const definition = sourceDefinitions[name] || 'Traffic channel data';
+        const def = sourceDefinitions[name] || 'Traffic channel data';
         sourceList.innerHTML += `
             <div class="source-item">
                 <span class="source-name">
                     ${name}
-                    <span class="tooltip">${definition}</span>
+                    <span class="tooltip">${def}</span>
                 </span>
                 <div class="source-bar-container">
                     <div class="source-bar-fill" style="width: ${percent}%"></div>
                 </div>
                 <span class="source-count">${percent}%</span>
-            </div>
-        `;
+            </div>`;
     });
 </script>
 {% endblock %}

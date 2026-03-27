@@ -3,22 +3,44 @@
 {% block title %}Blog - Monique Sierra{% endblock %}
 
 {% block content %}
-<section id="about" data-aos="fade-up" class="content-wrapper">
-  <div class="intro-container">
-    <h2>It's like we're chatting but I just don't stop</h2>
-    <p>Data projects, code experiments, and occasional rambling about tea.</p>
+
+<section class="content-wrapper intro-header-align" data-aos="fade-up">
+  <h1>blog</h1>
+
+  <p class="hero-subtitle">
+    notes, analysis, and things worth writing down
+  </p>
+
+  <div style="max-width: 720px; margin-top: 0.5rem;">
+    <p>
+      A collection of thoughts on data, systems, and patterns I keep noticing.
+      Some structured, some not. All intentional.
+    </p>
   </div>
 </section>
 
 <section class="content-wrapper">
-  <div class="project-grid-compact">
-    {% for post in posts %}
-    <a href="/blog/{{ post.id }}" class="project-tile" data-aos="fade-up">
-      <span class="project-date">{{ post.date }}</span>
-      <h3>{{ post.title }}</h3>
-      <p>{{ post.description }}</p>
-    </a>
-    {% endfor %}
+  <div class="post-list">
+
+    {% if posts %}
+      {% for post in posts %}
+      <a href="{{ url_for('blog_post', post_id=post.id) }}" class="post-item" data-aos="fade-up">
+        
+        <span class="post-date">{{ post.date }}</span>
+        
+        <span class="post-title">{{ post.title }}</span>
+        
+        <p class="post-description">
+          {{ post.description }}
+        </p>
+
+      </a>
+      {% endfor %}
+    {% else %}
+      <p style="opacity: 0.6;">No posts yet.</p>
+    {% endif %}
+
   </div>
 </section>
+
 {% endblock %}

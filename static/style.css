@@ -1,14 +1,24 @@
+/* ===== FUTURA ===== */
+@import url('https://fonts.cdnfonts.com/css/futura-pt');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap');
+
 /* ===== VARIABLES ===== */
 :root {
-  --red:          #df2935;
+  --red:          #c60000;
   --blue:         #3772ff;
-  --visited:      #884488;
-  --hover-bg:     #e8e8e8;
+  --visited:      #555555;
+  --hover-bg:     rgba(0,0,0,0.06);
   --white:        #ffffff;
+  --black:        #0a0a0a;
+  --glass-bg:     rgba(255, 255, 255, 0.60);
+  --glass-border: rgba(0, 0, 0, 0.10);
+  --glass-blur:   blur(14px);
 
-  --font-serif: 'Times New Roman', Times, serif;
-  --font-sans:  Arial, Helvetica, sans-serif;
+--font-serif: 'Futura';
+--font-sans:  'Futura PT', 'Futura', 'Century Gothic', Trebuchet MS, sans-serif;
+--font-sans-bold:  'Futura Bold', 'comic sans' sans-serif;
 }
+
 
 /* ===== RESET & BASE ===== */
 *, *::before, *::after {
@@ -17,9 +27,14 @@
   padding: 0;
 }
 
+/* Subtle grain texture on the body background */
 body {
-  background: var(--white);
-  color: #000;
+  background-color: #ffffff;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, rgba(0,0,0,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(0,0,0,0.03) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  color: var(--black);
   font-family: var(--font-sans);
   font-size: 22.5px;
   line-height: 1.6;
@@ -47,30 +62,31 @@ main {
 
 /* ===== LINKS ===== */
 a {
-  color: #000;
+  color: var(--black);
   text-decoration: none;
 }
-a:visited { color: #000; }
+a:visited { color: var(--black); }
 a:hover {
   background-color: var(--hover-bg);
   text-decoration: underline;
   color: var(--visited);
 }
 
-/* ===== HEADER ===== */
+/* ===== HEADER — glass ===== */
 .sticky-header {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 999;
-  background: var(--white);
-  border: none;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: none;
   height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Header uses same max-width and padding as body content */
 .sticky-header .content-wrapper {
   display: flex;
   flex-direction: row;
@@ -83,6 +99,7 @@ a:hover {
 #home-link::before { display: none; }
 #home-link:hover { background: none; text-decoration: none; }
 
+/* Red is reserved for the site title only */
 #site-title {
   font-family: var(--font-serif);
   font-size: 47px;
@@ -100,10 +117,10 @@ a:hover {
 }
 
 #main-nav a {
-  font-family: var(--font-sans);
+  font-family: var(--font-sans-bold);
   font-size: 24px;
   font-weight: normal;
-  color: #000;
+  color: var(--black);
   padding: 2px 4px;
   background: none !important;
   border: none;
@@ -125,42 +142,43 @@ a:hover {
   text-decoration: underline;
 }
 
-/* ===== TYPOGRAPHY HIERARCHY (consistent across all pages) ===== */
+/* ===== TYPOGRAPHY HIERARCHY ===== */
 /* h1: 46px  |  h2: 33px  |  h3: 26px  |  body: 22.5px */
 
 h1,
 .intro-header-align h1 {
-  font-family: var(--font-sans);
+  font-family: var(--font-sans-bold);
   font-size: 46px;
   font-weight: normal;
-  color: #000;
+  color: var(--black);
   margin-bottom: 12px;
   text-align: left;
   line-height: 1.3;
 }
 
 h2 {
-  font-family: var(--font-sans);
+  font-family: var(--font-sans-bold);
   font-size: 33px;
   font-weight: normal;
-  color: #000;
+  color: var(--black);
   margin-bottom: 8px;
   margin-top: 24px;
   text-align: left;
 }
-
+/* ===== titles of my blog links ===== */
 h3 {
   font-family: var(--font-sans);
   font-size: 26px;
+font-style: italic;
   font-weight: normal;
-  color: #000;
+  color: var(--black);
   margin-bottom: 6px;
   margin-top: 16px;
 }
 
 p {
   font-size: 22.5px;
-  color: #000;
+  color: var(--black);
   margin-bottom: 12px;
   line-height: 1.6;
 }
@@ -177,14 +195,15 @@ p {
 .hero-subtitle {
   font-family: var(--font-sans);
   font-size: 26px;
-  color: #000;
+  font-style: italic;
+  color: var(--black);
   margin-bottom: 14px;
 }
 .hero-subtitle::before { display: none; }
 
 .hero-description p {
   font-size: 22.5px;
-  color: #000;
+  color: var(--black);
   margin-bottom: 12px;
   line-height: 1.6;
 }
@@ -195,7 +214,7 @@ p {
   font-family: var(--font-sans);
   font-size: 22.5px;
   font-weight: bold;
-  color: #000;
+  color: var(--black);
   margin-bottom: 8px;
   display: block;
 }
@@ -213,7 +232,7 @@ p {
 
 .cta-button {
   background: none !important;
-  color: #000 !important;
+  color: var(--black) !important;
   padding: 2px 4px;
   font-family: var(--font-sans);
   font-size: 22.5px;
@@ -231,7 +250,7 @@ p {
 
 .cta-secondary {
   font-size: 22.5px;
-  color: #000 !important;
+  color: var(--black) !important;
   text-decoration: none !important;
   border: none;
   padding: 2px 4px;
@@ -242,9 +261,7 @@ p {
   color: var(--visited) !important;
 }
 
-/* ===== POST LIST — blog & projects as stacked rectangles ===== */
-/* Use <div class="post-list"> wrapping <div class="post-item"> elements  */
-/* Order in HTML: oldest first, newest last                               */
+/* ===== POST LIST — stacked rectangles with glass panels ===== */
 .post-list {
   display: flex;
   flex-direction: column;
@@ -255,10 +272,19 @@ p {
   display: flex;
   flex-direction: column;
   padding: 14px 0;
-  border-bottom: 1px solid #ddd;
+  border-bottom: none;
   gap: 4px;
+  transition: background 0.15s ease;
 }
-.post-item:first-child { border-top: 1px solid #ddd; }
+.post-item:first-child { border-top: none; }
+.post-item:hover {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 2px;
+}
 
 .post-item .post-date {
   font-size: 18px;
@@ -268,7 +294,7 @@ p {
 .post-item a.post-title,
 .post-item .post-title {
   font-size: 22.5px;
-  color: #000;
+  color: var(--black);
   font-weight: normal;
 }
 .post-item a.post-title:hover,
@@ -290,7 +316,7 @@ p {
   color: #666;
 }
 
-/* ===== LEGACY CARD CLASSES — converted to stacked rectangles ===== */
+/* ===== LEGACY CARD CLASSES ===== */
 .project-grid,
 .blog-grid {
   display: flex;
@@ -300,20 +326,31 @@ p {
 
 .project-card,
 .blog-card {
-  background: var(--white);
+  background: transparent;
   border: none;
-  border-bottom: 1px solid #ddd;
+  border-bottom: none;
   padding: 14px 0;
   aspect-ratio: unset;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   gap: 4px;
+  transition: background 0.15s ease, padding 0.15s ease;
 }
 .project-card:first-child,
-.blog-card:first-child { border-top: 1px solid #ddd; }
+.blog-card:first-child { border-top: none; }
 .project-card::before, .blog-card::before { display: none; }
-.project-card:hover, .blog-card:hover { transform: none; box-shadow: none; }
+.project-card:hover,
+.blog-card:hover {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 2px;
+  transform: none;
+  box-shadow: none;
+}
 
 .project-card .card-tag,
 .blog-card .card-tag {
@@ -322,7 +359,7 @@ p {
 }
 .project-card h3, .blog-card h3 {
   font-size: 22.5px;
-  color: #000;
+  color: var(--black);
   font-weight: normal;
   margin: 0;
   cursor: pointer;
@@ -350,7 +387,7 @@ p {
 .chip {
   font-family: var(--font-sans);
   font-size: 20px;
-  color: #000;
+  color: var(--black);
   border: none;
   background: none;
   padding: 1px 3px;
@@ -358,13 +395,15 @@ p {
 .chip:hover { background-color: var(--hover-bg); text-decoration: underline; color: var(--visited); }
 .chip.highlight { font-weight: bold; }
 
-/* ===== FOOTER ===== */
+/* ===== FOOTER — glass panel ===== */
 .footer-banner {
   margin-top: 32px;
   padding: 20px 0;
   text-align: center;
-  border: none;
-  background: var(--white);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-top: none;
 }
 .footer-banner::before { display: none; }
 
@@ -376,29 +415,30 @@ p {
 }
 .icon-row a {
   font-size: 34px;
-  color: var(--blue);
+  color: var(--black);
   background: none;
   border: none;
   width: auto;
   height: auto;
   padding: 4px 8px;
   text-decoration: none;
+  transition: color 0.15s;
 }
-.icon-row a:visited { color: var(--blue); }
+.icon-row a:visited { color: var(--black); }
 .icon-row a:hover {
   background-color: var(--hover-bg);
   text-decoration: none;
-  color: var(--blue);
+  color: var(--visited);
 }
 
 .angst-tag {
   font-family: var(--font-sans);
   font-size: 20px;
-  color: #000;
+  color: #444;
 }
 .sub-quote {
   font-size: 20px;
-  color: #444;
+  color: #666;
   font-style: italic;
   margin-top: 4px;
 }
@@ -414,7 +454,7 @@ form label {
   font-family: var(--font-sans);
   font-size: 22.5px;
   font-weight: normal;
-  color: #000;
+  color: var(--black);
   margin-top: 16px;
   margin-bottom: 4px;
 }
@@ -423,11 +463,13 @@ form input[type="email"],
 form textarea {
   width: 100%;
   padding: 6px 8px;
-  border: 1px solid #999;
-  background: var(--white);
+  border: none;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   font-family: var(--font-sans);
   font-size: 22.5px;
-  color: #000;
+  color: var(--black);
   box-shadow: none;
   border-radius: 0;
 }
@@ -439,8 +481,8 @@ form textarea::placeholder {
 }
 form input:focus,
 form textarea:focus {
-  outline: 1px solid var(--blue);
-  border-color: var(--blue);
+  outline: 1px solid var(--red);
+  border-color: var(--red);
   box-shadow: none;
 }
 form textarea {
@@ -449,12 +491,12 @@ form textarea {
 }
 form button {
   background: none !important;
-  color: #000 !important;
+  color: var(--black) !important;
   padding: 5px 16px;
   font-family: var(--font-sans);
   font-size: 22.5px;
   font-weight: normal;
-  border: 1px solid #999;
+  border: none;
   cursor: pointer;
   margin-top: 12px;
   box-shadow: none;
@@ -469,7 +511,7 @@ form button:hover {
 .resume-link {
   font-family: var(--font-sans);
   font-size: 22.5px;
-  color: #000 !important;
+  color: var(--black) !important;
   text-decoration: none !important;
   padding: 1px 3px;
 }
@@ -479,20 +521,36 @@ form button:hover {
   color: var(--visited) !important;
 }
 
-/* ===== BOX ===== */
-.box        { background: var(--white); margin-bottom: 14px; }
-.box-header { font-family: var(--font-sans); font-size: 22.5px; font-weight: bold; color: #000; margin-bottom: 6px; background: none; padding: 0; }
+/* ===== BOX — glass panel ===== */
+.box {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: none;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  border-radius: 2px;
+}
+.box-header {
+  font-family: var(--font-sans);
+  font-size: 22.5px;
+  font-weight: bold;
+  color: var(--black);
+  margin-bottom: 6px;
+  background: none;
+  padding: 0;
+}
 .box-header::before { display: none; }
-.box-body   { padding: 0; }
+.box-body { padding: 0; }
 
 /* ===== SELECTION ===== */
-::selection { background: var(--blue); color: var(--white); }
+::selection { background: var(--black); color: var(--white); }
 
 /* ===== SCROLLBAR ===== */
-::-webkit-scrollbar       { width: 12px; }
-::-webkit-scrollbar-track { background: var(--white); }
-::-webkit-scrollbar-thumb { background: #ccc; border: 1px solid #aaa; }
-::-webkit-scrollbar-thumb:hover { background: #aaa; }
+::-webkit-scrollbar       { width: 10px; }
+::-webkit-scrollbar-track { background: #e8e8e8; }
+::-webkit-scrollbar-thumb { background: #bbb; border: 1px solid #aaa; }
+::-webkit-scrollbar-thumb:hover { background: #888; }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
