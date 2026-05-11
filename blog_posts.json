@@ -1,13 +1,5 @@
 [
   {
-    "id": "ga4-report",
-    "title": "Building a Real-Time Analytics Pipeline",
-    "date": "Jan 28, 2026",
-    "description": "Watching for traffic like a submarine sonar ping. Built using GA4's free reporting API, Python on the backend, and Chart.js on the front.",
-    "image": "/static/images/ga4-dashboard.png",
-    "tags": ["Python", "API", "Chart.js", "Google Analytics"]
-  },
-  {
     "id": "texas burbs",
     "title": "texas burbs",
     "date": "Apr 9, 2026",

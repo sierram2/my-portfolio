@@ -73,6 +73,7 @@ a:hover {
 }
 
 /* ===== HEADER — glass ===== */
+
 .sticky-header {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -84,7 +85,7 @@ a:hover {
   height: 80px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* was: center */
 }
 
 .sticky-header .content-wrapper {
@@ -112,7 +113,7 @@ a:hover {
 
 #main-nav {
   display: flex;
-  gap: 28px;
+  gap: 25px;
   align-items: center;
 }
 
@@ -445,7 +446,7 @@ p {
 
 /* ===== FORMS ===== */
 form {
-  max-width: 600px;
+  max-width: 100%;
   margin: 16px 0 0;
   text-align: left;
 }
@@ -463,7 +464,7 @@ form input[type="email"],
 form textarea {
   width: 100%;
   padding: 6px 8px;
-  border: none;
+  border: 0.5px solid var(--black);
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -481,8 +482,8 @@ form textarea::placeholder {
 }
 form input:focus,
 form textarea:focus {
-  outline: 1px solid var(--red);
-  border-color: var(--red);
+  outline: none;
+  border: 0.5px solid var(--black);
   box-shadow: none;
 }
 form textarea {
@@ -496,7 +497,7 @@ form button {
   font-family: var(--font-sans);
   font-size: 22.5px;
   font-weight: normal;
-  border: none;
+  border: 0.5px solid var(--black);
   cursor: pointer;
   margin-top: 12px;
   box-shadow: none;
