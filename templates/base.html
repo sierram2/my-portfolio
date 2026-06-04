@@ -11,15 +11,13 @@
 
     {% block head_extra %}{% endblock %}
 </head>
-<!-- Google tag (gtag.js) -->
+
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-4M67CW2DBG"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-4M67CW2DBG');
-</script>
 </script>
 
 <body>
@@ -47,7 +45,7 @@
             <div class="icon-row">
                 <a href="https://github.com/sierram2" target="_blank" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
                 <a href="https://www.linkedin.com/in/monique-s-9b0880176/" target="_blank" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
-                <a href="https://open.spotify.com/user/moniquesierra10?si=d0a234777a76478f" target="_blank" aria-label="Spotify"><i class="fa-brands fa-spotify"></i></a>
+                <a href="https://open.spotify.com/user/YOUR_ID" target="_blank" aria-label="Spotify"><i class="fa-brands fa-spotify"></i></a>
                 <a href="https://www.duolingo.com/profile/squirrrrelss" target="_blank" aria-label="Duolingo"><i class="fa-solid fa-language"></i></a>
                 <a href="mailto:lrsierra03@gmail.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
             </div>
@@ -57,13 +55,17 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const currentPath = window.location.pathname;
+            // Normalizes the path by removing trailing slashes for the active check
+            const currentPath = window.location.pathname.replace(/\/$/, "") || "/";
+            
             document.querySelectorAll('#main-nav a').forEach(link => {
-                if (link.getAttribute('href') === currentPath) {
+                const linkPath = link.getAttribute('href').replace(/\/$/, "") || "/";
+                if (linkPath === currentPath) {
                     link.classList.add('active');
                 }
             });
-            if (currentPath === '/' || currentPath === '') {
+
+            if (currentPath === '/') {
                 document.getElementById('site-title').classList.add('active');
             }
         });

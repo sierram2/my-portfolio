@@ -1,73 +1,47 @@
-import pandas as pd
-import geopandas
-import matplotlib.pyplot as plt
-import json
-import io
 import os
+import requests
+import pandas as pd
+import matplotlib.pyplot as plt
 
-# --- Configuration ---
-CSV_FILE_NAME = "breast_cancer_data_texas_counties.csv"
-# The path you provided for your file:
-GEOJSON_PATH = r"C:\Users\sierram2\Downloads\tx_counties.geojson" 
+# ── Config ────────────────────────────────────────────────────
+API_TOKEN  = "CDC_API_TOKEN.txt"
+BASE       = "https://ephtracking.cdc.gov/apigateway/api/v1"
+OUTPUT_DIR = "ephtn_outputs"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# ====================================================================
-# PART 1: LOAD BREAST CANCER DATA (from the CSV you previously created)
-# ====================================================================
-try:
-    df_cancer = pd.read_csv(CSV_FILE_NAME)
-    print(f"✅ Loaded data from existing file: {CSV_FILE_NAME}.")
-except Exception as e:
-    print(f"❌ FATAL ERROR: Could not load existing CSV file. Error: {e}")
-    print("Please ensure the CSV file exists in your current working directory.")
-    exit()
+# ── Pull Data ─────────────────────────────────────────────────
+url = (f"{BASE}/getCoreHolder/1095/2/1/48/1/2021,2020,2019,2018,2017,2016,2015/0/0")
+r   = requests.get(url, params={"apiToken": API_TOKEN}, timeout=90)
+df  = pd.DataFrame(r.json()["tableResult"])
+df.columns = [c.lower() for c in df.columns]
 
-# ====================================================================
-# PART 2: LOAD GEOJSON (Using Workaround for Fiona Error)
-# ====================================================================
-try:
-    # Workaround: Read GeoJSON as raw text
-    with open(GEOJSON_PATH, 'r', encoding='utf-8') as f:
-        geojson_content = f.read()
-    
-    # Load content into GeoDataFrame
-    gdf = geopandas.read_file(io.StringIO(geojson_content))
-    print(f"✅ GeoJSON boundaries loaded successfully using content workaround.")
+# ── Aggregate by year ─────────────────────────────────────────
+df["datavalue"] = pd.to_numeric(df["datavalue"], errors="coerce")
+df["temporalid"] = pd.to_numeric(df["temporalid"], errors="coerce")
+yearly = df.groupby("temporalid")["datavalue"].mean().reset_index()
+yearly.columns = ["year", "avg_prevalence"]
+yearly = yearly.sort_values("year")
 
-except Exception as e:
-    print(f"❌ FATAL ERROR loading GeoJSON file. Check path/file integrity. Error: {e}")
-    print("Cannot create map without geographical data.")
-    exit()
+# ── Bar Chart ─────────────────────────────────────────────────
+fig, ax = plt.subplots(figsize=(10, 6))
+bars = ax.bar(yearly["year"].astype(int), yearly["avg_prevalence"],
+              color="#e34a33", edgecolor="#111", linewidth=0.5)
 
-# ====================================================================
-# PART 3: PREPARE DATA AND MERGE (FINAL FIPS FIXES APPLIED)
-# ====================================================================
+for bar, val in zip(bars, yearly["avg_prevalence"]):
+    ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.02,
+            f"{val:.2f}%", ha="center", va="bottom", fontsize=9)
 
-# 1. Prepare GeoJSON FIPS 
-if 'FIPS' in gdf.columns:
-    # Ensure FIPS is string and 5 digits (e.g., "48111")
-    gdf['FIPS_KEY'] = gdf['FIPS'].astype(str).str.zfill(5)
-else:
-    print("❌ GeoJSON does not contain the 'FIPS' column. Cannot merge.")
-    exit()
+ax.set_xlabel("Year", fontsize=12)
+ax.set_ylabel("Avg Crude Prevalence (%)", fontsize=12)
+ax.set_title("Crude Cancer Prevalence by Year · Texas", fontsize=14, fontweight="bold")
+ax.set_xticks(yearly["year"].astype(int))
+ax.yaxis.grid(True, linestyle="--", alpha=0.4)
+ax.set_axisbelow(True)
 
-# 2. Prepare Cancer Data FIPS and isolate latest year
-FIPS_DATA_COL = 'geoId' 
-if FIPS_DATA_COL not in df_cancer.columns:
-    print(f"❌ CSV Data missing expected FIPS column: '{FIPS_DATA_COL}'.")
-    exit()
+plt.tight_layout()
+path = os.path.join(OUTPUT_DIR, "tx_cancer_by_year.png")
+plt.savefig(path, dpi=150, bbox_inches="tight")
+print(f"Saved → {path}")
+plt.show()
 
-df_cancer['FIPS_KEY'] = df_cancer[FIPS_DATA_COL].astype(str).str.zfill(5)
-
-# Isolate the latest year's data
-latest_year = df_cancer['temporal'].max()
-df_data_map = (
-    df_cancer[df_cancer['temporal'] == latest_year][['FIPS_KEY', 'dataValue']]
-    .rename(columns={'dataValue': 'Cancer_Rate'})
-)
-
-# 3. Merge on the common key: 'FIPS_KEY'
-gdf_merged = gdf.merge(df_data_map, on='FIPS_KEY', how='left')
-gdf_merged_clean = gdf_merged.dropna(subset=['Cancer_Rate'])
-
-print(f"✅ Data successfully merged. {gdf_merged_clean.shape[0]} counties available for mapping.")
 
