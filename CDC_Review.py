@@ -2,43 +2,48 @@
 CDC_Review.py
 
 Live data layer for the Cancer Data Analysis page (/blog/cancer-analysis).
-Pulls Texas county-level cancer prevalence + PM2.5 + water quality data
-from the CDC Environmental Public Health Tracking Network (EPHTN) API,
-and returns plain JSON-ready dicts for Chart.js to render on the front end.
 
-Mirrors the pattern used by analytics/ga_daily.py: fetch -> shape into JSON
--> hand to a Flask route, which either renders a template or returns raw JSON.
+Pulls two things from the CDC Environmental Public Health Tracking
+Network (EPHTN) API:
+
+  1. County-level "all sites" crude cancer prevalence for the most
+     recent year -> rendered as a Plotly choropleth map.
+  2. Statewide yearly trends for the five most-tracked site-specific
+     cancer types (lung, breast, prostate, colorectal, melanoma) ->
+     rendered as a multi-line Chart.js chart.
+
+The site-specific measure IDs are NOT hardcoded. EPHTN's /measuresearch
+catalog is queried live and filtered by keyword, so this keeps working
+even if CDC renumbers measures — see _discover_top5_measure_ids().
 """
 import os
-import time
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import requests
-
-from scipy.stats import pearsonr
+import plotly.graph_objects as go
+import plotly.io as pio
 
 BASE = "https://ephtracking.cdc.gov/apigateway/api/v1"
 TX_FIPS = "48"
 
-MEASURE_CONFIG = {
-    "cancer_prevalence": {
-        "id": 1095, "temporal_type": 1,
-        "years": [str(y) for y in range(2015, 2022)], "static": False,
-    },
-    "pm25_annual_avg": {
-        "id": 296, "temporal_type": 1,
-        "years": [str(y) for y in range(2015, 2022)], "static": False,
-    },
-    "water_quality_index": {
-        "id": 1201, "temporal_type": 2,
-        "years": ["2010"], "static": True,  # single 2006-2010 snapshot
-    },
+ALL_SITES_MEASURE_ID = 1095       # "Cancer, all sites, crude rate"
+YEARS = [str(y) for y in range(2015, 2022)]
+
+# Keyword -> display label for the five cancer types CDC's own sub-county
+# cancer data pilot covers (lung, breast, prostate, colorectal, melanoma).
+# We search the live measure catalog for each keyword rather than
+# hardcoding measureIds, since those can differ/change over time.
+TOP5_CANCER_KEYWORDS = {
+    "Lung & Bronchus": ["lung"],
+    "Female Breast": ["breast"],
+    "Prostate": ["prostate"],
+    "Colorectal": ["colorectal", "colon"],
+    "Melanoma": ["melanoma"],
 }
 
-# Simple in-memory cache so we don't re-hit the CDC API on every page view.
-# The CDC API is slow (multiple calls per measure) and rate-limit friendly
-# use matters more than sub-hour freshness for a report like this.
+# In-memory cache so the CDC API isn't re-queried on every page view.
 _CACHE = {"data": None, "fetched_at": 0}
 _CACHE_TTL_SECONDS = 60 * 60  # 1 hour
 
@@ -46,31 +51,97 @@ _CACHE_TTL_SECONDS = 60 * 60  # 1 hour
 def _get_api_token():
     """Render: read from env var. Local dev: fall back to a gitignored file."""
     token = os.environ.get("EPHTN_API_TOKEN")
+
     if token:
-        return token
-    local_path = os.path.join(os.getcwd(), "CDC_API_TOKEN.txt")
-    if os.path.exists(local_path):
-        with open(local_path, "r") as f:
-            return f.read().strip()
+        return token.strip()
+
+    token_file = Path(__file__).with_name("CDC_API_TOKEN.txt")
+
+    if token_file.exists():
+        return token_file.read_text(encoding="utf-8").strip()
+
     raise RuntimeError(
-        "No CDC API token found. Set the EPHTN_API_TOKEN environment variable "
-        "(Render) or create a local 'CDC_API_TOKEN.txt' file (gitignored) "
-        "containing just the token string."
+        "EPHTN_API_TOKEN is not configured and CDC_API_TOKEN.txt was not found."
     )
 
 
 def _api_get(token, path, **params):
     params["apiToken"] = token
-    r = requests.get(f"{BASE}/{path}", params=params, timeout=90)
-    r.raise_for_status()
-    return r.json()
+
+    response = requests.get(
+        f"{BASE}/{path}",
+        params=params,
+        timeout=90
+    )
+
+    response.raise_for_status()
+    return response.json()
 
 
-def _get_stratification_level_id(token, measure_id, geo_type_id=2, is_smoothed=0):
-    levels = _api_get(token, f"stratificationlevel/{measure_id}/{geo_type_id}/{is_smoothed}")
-    plain = [l for l in levels if not l.get("stratificationType")]
+def _to_fips(geo_id, state_fips=TX_FIPS):
+    """Normalize whatever the API gives us in 'geoId' into a 5-digit
+    state+county FIPS code matching the GeoJSON's 'geoId' property."""
+    s = str(geo_id).split(".")[0].strip()
+    if len(s) <= 3:
+        return f"{state_fips}{s.zfill(3)}"
+    return s.zfill(5)
+
+
+def _get_stratification_level_id(
+    token,
+    measure_id,
+    geo_type_id=2,
+    is_smoothed=0
+):
+    response = _api_get(
+        token,
+        f"stratificationlevel/{measure_id}/{geo_type_id}/{is_smoothed}"
+    )
+
+    if isinstance(response, dict):
+        levels = (
+            response.get("data")
+            or response.get("results")
+            or response.get("items")
+            or response.get("stratificationLevels")
+            or []
+        )
+    elif isinstance(response, list):
+        levels = response
+    else:
+        levels = []
+
+    if not levels:
+        raise RuntimeError(
+            f"CDC returned no stratification levels for "
+            f"measureId={measure_id}, geoTypeId={geo_type_id}, "
+            f"isSmoothed={is_smoothed}. Response: {response!r}"
+        )
+
+    plain = [
+        level for level in levels
+        if str(
+            level.get(
+                "isSmoothed",
+                level.get("smoothed", 0)
+            )
+        ).lower() in {"0", "false"}
+    ]
+
     chosen = plain[0] if plain else levels[0]
-    return chosen["id"]
+
+    stratification_id = (
+        chosen.get("stratificationLevelId")
+        or chosen.get("stratificationlevelId")
+        or chosen.get("id")
+    )
+
+    if stratification_id is None:
+        raise RuntimeError(
+            f"CDC stratification response has no ID: {chosen!r}"
+        )
+
+    return stratification_id
 
 
 def _list_texas_counties(token, measure_id, geo_type_id=2):
@@ -98,162 +169,213 @@ def _fetch_county_data(token, measure_id, county_fips, years, strat_level_id,
     df = pd.DataFrame(data.get("tableResult", []))
     if df.empty:
         return df
+    # Cell-size / deidentification suppression: drop flagged rows so we
+    # never show a value built from too few underlying cases.
     df = df[df["suppressionFlag"].astype(str) != "1"]
     df["dataValue"] = pd.to_numeric(df["dataValue"], errors="coerce")
     df["temporalId"] = pd.to_numeric(df["temporalId"], errors="coerce")
     return df[["geoId", "geo", "temporalId", "dataValue"]]
 
 
-def _pull_measure(token, label, cfg):
-    measure_id = cfg["id"]
+def _pull_measure_df(token, measure_id, years):
+    """Full county-year dataframe for a single measureId."""
     strat_id = _get_stratification_level_id(token, measure_id)
     counties = _list_texas_counties(token, measure_id)
     if not counties:
-        raise RuntimeError(f"No Texas counties found for measureId={measure_id} ('{label}').")
-    df = _fetch_county_data(token, measure_id, counties, cfg["years"], strat_id,
-                             temporal_type_id=cfg["temporal_type"])
-    names = df[["geoId", "geo"]].drop_duplicates() if "geo" in df.columns else None
-    df = df.rename(columns={"dataValue": label})
-    if "geo" in df.columns:
-        df = df.drop(columns=["geo"])
-    if cfg["static"]:
-        df = df.drop(columns=["temporalId"])
-    return df, names
+        return pd.DataFrame()
+    return _fetch_county_data(token, measure_id, counties, years, strat_id)
 
 
-def _build_merged_dataframe(token):
-    annual_dfs, static_dfs = [], []
-    county_names = None
-    for label, cfg in MEASURE_CONFIG.items():
-        df, names = _pull_measure(token, label, cfg)
-        if names is not None:
-            county_names = names
-        (static_dfs if cfg["static"] else annual_dfs).append(df)
-        time.sleep(0.3)  # be polite to the API
+def _discover_top5_measure_ids(token):
+    """Search the live EPHTN measure catalog for the five site-specific
+    cancer measures we want, instead of hardcoding measureIds. Prefers a
+    "crude rate" variant when multiple matches exist for a keyword."""
+    catalog = pd.DataFrame(_api_get(token, "measuresearch"))
+    searchable = (
+        catalog.get("measureName", pd.Series(dtype=str)).fillna("") + " " +
+        catalog.get("indicatorName", pd.Series(dtype=str)).fillna("")
+    ).str.lower()
 
-    merged = annual_dfs[0]
-    for df in annual_dfs[1:]:
-        merged = pd.merge(merged, df, on=["geoId", "temporalId"], how="inner")
-    for df in static_dfs:
-        merged = pd.merge(merged, df, on=["geoId"], how="inner")
-    if county_names is not None:
-        merged = merged.merge(county_names, on="geoId", how="left")
-    return merged
-
-
-def _quartiles(values):
-    q1, med, q3 = np.percentile(values, [25, 50, 75])
-    return {"min": float(np.min(values)), "q1": float(q1), "median": float(med),
-            "q3": float(q3), "max": float(np.max(values))}
+    resolved = {}
+    for label, keywords in TOP5_CANCER_KEYWORDS.items():
+        mask = False
+        for kw in keywords:
+            mask = mask | searchable.str.contains(kw.lower())
+        matches = catalog[mask]
+        if matches.empty:
+            continue
+        crude = matches[matches["measureName"].str.contains("crude", case=False, na=False)]
+        chosen = crude.iloc[0] if len(crude) else matches.iloc[0]
+        resolved[label] = int(chosen["measureId"])
+    return resolved
 
 
-def _linear_fit(x, y):
-    slope, intercept = np.polyfit(x, y, 1)
-    xs = np.linspace(np.min(x), np.max(x), 30)
-    ys = slope * xs + intercept
-    return xs.tolist(), ys.tolist()
+def _load_tx_geojson():
+    """Loads the Texas county boundaries file. Assumes it lives at
+    static/tx_counties.geojson relative to the project root (i.e. next
+    to this file) — adjust the path here if you move it."""
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                         "static", "tx_counties.geojson")
+    with open(path, "r") as f:
+        import json
+        return json.load(f)
 
 
-def _shape_for_frontend(merged):
-    value_cols = list(MEASURE_CONFIG.keys())
+def _build_choropleth(county_values, latest_year):
+    geojson = _load_tx_geojson()
+    fips_codes = list(county_values.keys())
+    values = [county_values[f]["value"] for f in fips_codes]
+    names = [county_values[f]["name"] for f in fips_codes]
 
-    # Yearly average bar chart
-    yearly = (merged.groupby("temporalId")["cancer_prevalence"]
-              .mean().reset_index().sort_values("temporalId"))
-    yearly_prevalence = {
-        "years": yearly["temporalId"].astype(int).tolist(),
-        "values": [round(v, 2) for v in yearly["cancer_prevalence"].tolist()],
+    fig = go.Figure(go.Choropleth(
+        geojson=geojson,
+        featureidkey="properties.geoId",
+        locations=fips_codes,
+        z=values,
+        text=names,
+        colorscale="Reds",
+        marker_line_color="white",
+        marker_line_width=0.5,
+        colorbar_title="Crude Prevalence (%)",
+        hovertemplate="<b>%{text}</b><br>Prevalence: %{z}%<extra></extra>",
+    ))
+    fig.update_geos(fitbounds="locations", visible=False)
+    fig.update_layout(
+        title=f"Cancer Prevalence by County — {latest_year}",
+        margin=dict(l=0, r=0, t=40, b=0),
+        height=560,
+    )
+    return pio.to_json(fig)
+
+
+def _build_insights(county_values, trend_series, latest_year, debug):
+    """Five data-driven takeaways, computed from whatever actually came
+    back this pull — not static/hardcoded text."""
+    insights = []
+
+    if county_values:
+        by_value = sorted(county_values.items(), key=lambda kv: kv[1]["value"])
+        lowest = by_value[0][1]
+        highest = by_value[-1][1]
+        insights.append(
+            f"{highest['name']} had the highest reported crude cancer prevalence in "
+            f"{latest_year} at {highest['value']}%, compared to {lowest['name']} at "
+            f"{lowest['value']}%."
+        )
+
+    if trend_series:
+        deltas = {}
+        for label, series in trend_series.items():
+            vals = [v for v in series["values"] if v is not None]
+            if len(vals) >= 2:
+                deltas[label] = vals[-1] - vals[0]
+        if deltas:
+            fastest = max(deltas, key=lambda k: deltas[k])
+            slowest = min(deltas, key=lambda k: deltas[k])
+            insights.append(
+                f"Among the five tracked cancer types, {fastest} rose the most over the "
+                f"period tracked ({deltas[fastest]:+.2f} percentage points)."
+            )
+            insights.append(
+                f"{slowest} showed the smallest change over the same period "
+                f"({deltas[slowest]:+.2f} percentage points), "
+                + ("suggesting a decline." if deltas[slowest] < 0 else "roughly holding steady.")
+            )
+
+    if debug.get("counties_matched") is not None:
+        missing = 254 - debug["counties_matched"]
+        if missing > 0:
+            insights.append(
+                f"{missing} of Texas's 254 counties had no reportable {latest_year} data due "
+                f"to cell-size suppression (too few underlying cases to protect privacy) — "
+                f"gaps by design, not missing data."
+            )
+
+    if trend_series:
+        first_label = next(iter(trend_series))
+        years = trend_series[first_label]["years"]
+        if years:
+            insights.append(
+                f"Trends span {years[0]}–{years[-1]}; rural, low-population counties are "
+                f"more likely to be suppressed in any given year than urban ones, since "
+                f"suppression is based on case counts, not population size."
+            )
+
+    return insights[:5]
+
+
+def _shape_for_frontend(all_sites_df, top5_dfs):
+    latest_year = int(all_sites_df["temporalId"].dropna().max())
+    latest = all_sites_df[all_sites_df["temporalId"] == latest_year].dropna(subset=["dataValue"])
+
+    county_values = {
+        _to_fips(row.geoId): {"name": row.geo, "value": round(float(row.dataValue), 2)}
+        for row in latest.itertuples()
     }
 
-    # Quartile range ("boxplot") by year
-    years_sorted = sorted(merged["temporalId"].dropna().unique())
-    boxplot_by_year = {"years": [int(y) for y in years_sorted], "quartiles": []}
-    for y in years_sorted:
-        vals = merged.loc[merged["temporalId"] == y, "cancer_prevalence"].dropna().values
-        boxplot_by_year["quartiles"].append(_quartiles(vals) if len(vals) else None)
+    map_fig_json = _build_choropleth(county_values, latest_year)
 
-    # Top / bottom counties, most recent year
-    latest_year = merged["temporalId"].dropna().max()
-    latest = merged.loc[merged["temporalId"] == latest_year, ["geo", "cancer_prevalence"]].dropna()
-    latest = latest.sort_values("cancer_prevalence", ascending=False)
-    top_counties = latest.head(15).to_dict(orient="records")
-    bottom_counties = latest.tail(15).sort_values("cancer_prevalence").to_dict(orient="records")
-
-    # Distributions (histogram bins computed server-side)
-    distributions = {}
-    for col in value_cols:
-        vals = merged[col].dropna().values
-        if len(vals) == 0:
+    # Top-5 cancer trend series: statewide yearly average per cancer type
+    trend_series = {}
+    for label, df in top5_dfs.items():
+        if df.empty:
             continue
-        counts, edges = np.histogram(vals, bins=20)
-        distributions[col] = {
-            "bin_labels": [f"{edges[i]:.1f}-{edges[i+1]:.1f}" for i in range(len(edges) - 1)],
-            "counts": counts.tolist(),
+        yearly = df.groupby("temporalId")["dataValue"].mean().reset_index().sort_values("temporalId")
+        trend_series[label] = {
+            "years": yearly["temporalId"].astype(int).tolist(),
+            "values": [round(v, 2) for v in yearly["dataValue"].tolist()],
         }
 
-    # Statewide dual trend: cancer_prevalence vs pm25_annual_avg
-    trend = (merged.groupby("temporalId")[["cancer_prevalence", "pm25_annual_avg"]]
-             .mean().reset_index().sort_values("temporalId"))
-    trend_dual = {
-        "years": trend["temporalId"].astype(int).tolist(),
-        "cancer_prevalence": [round(v, 2) for v in trend["cancer_prevalence"].tolist()],
-        "pm25_annual_avg": [round(v, 2) for v in trend["pm25_annual_avg"].tolist()],
+    debug = {
+        "total_rows_all_sites": int(len(all_sites_df)),
+        "rows_for_latest_year": int(len(latest)),
+        "counties_matched": len(county_values),
+        "top5_measures_found": list(trend_series.keys()),
     }
 
-    # Correlations + scatter + regression line + residuals
-    correlations = {}
-    scatter = {}
-    residuals = {}
-    for col in value_cols[1:]:
-        sub = merged[["cancer_prevalence", col]].dropna()
-        if len(sub) < 3:
-            continue
-        r, p = pearsonr(sub["cancer_prevalence"], sub[col])
-        correlations[col] = {"r": round(float(r), 3), "p": round(float(p), 4), "n": int(len(sub))}
-
-        x, y = sub[col].values, sub["cancer_prevalence"].values
-        line_x, line_y = _linear_fit(x, y)
-        scatter[col] = {
-            "points": [{"x": float(a), "y": float(b)} for a, b in zip(x, y)],
-            "fit_line": [{"x": a, "y": b} for a, b in zip(line_x, line_y)],
-        }
-
-        slope, intercept = np.polyfit(x, y, 1)
-        predicted = slope * x + intercept
-        resid = y - predicted
-        residuals[col] = [{"x": float(a), "y": float(b)} for a, b in zip(x, resid)]
+    insights = _build_insights(county_values, trend_series, latest_year, debug)
 
     return {
         "generated_at": int(time.time()),
-        "yearly_prevalence": yearly_prevalence,
-        "boxplot_by_year": boxplot_by_year,
-        "top_counties": top_counties,
-        "bottom_counties": bottom_counties,
-        "distributions": distributions,
-        "trend_dual": trend_dual,
-        "correlations": correlations,
-        "scatter": scatter,
-        "residuals": residuals,
-        "latest_year": int(latest_year),
+        "latest_year": latest_year,
+        "map_fig_json": map_fig_json,
+        "trend_series": trend_series,
+        "insights": insights,
+        "debug": debug,
         "caveat": (
-            "County-level (ecological) correlations, not individual-level evidence. "
-            "Age distribution, population size, and reporting lags aren't controlled for. "
-            "water_quality_index reflects a single 2006-2010 snapshot applied to all years."
+            "County-level (ecological) data, not individual-level evidence. "
+            "Cell-size suppression removes any county-year built from too few "
+            "underlying cases to protect privacy."
         ),
     }
 
 
 def get_cancer_dashboard_data(force_refresh=False):
-    """Public entry point used by app.py. Cached for _CACHE_TTL_SECONDS so the
-    live CDC API isn't re-queried on every page view."""
+    """Public entry point used by app.py. Cached for _CACHE_TTL_SECONDS so
+    the live CDC API isn't re-queried on every page view."""
     now = time.time()
     if not force_refresh and _CACHE["data"] is not None and (now - _CACHE["fetched_at"]) < _CACHE_TTL_SECONDS:
         return _CACHE["data"]
 
     token = _get_api_token()
-    merged = _build_merged_dataframe(token)
-    shaped = _shape_for_frontend(merged)
 
+    all_sites_df = _pull_measure_df(token, ALL_SITES_MEASURE_ID, YEARS)
+    if all_sites_df.empty:
+        raise RuntimeError("CDC API returned no usable (non-suppressed) all-sites rows for Texas.")
+
+    top5_ids = _discover_top5_measure_ids(token)
+    top5_dfs = {}
+    for label, measure_id in top5_ids.items():
+        try:
+            top5_dfs[label] = _pull_measure_df(token, measure_id, YEARS)
+        except requests.HTTPError:
+            # Some site-specific measures may not have Texas county data at
+            # all (too rare, or not tracked at this geography) — skip rather
+            # than fail the whole page.
+            continue
+        time.sleep(0.2)
+
+    shaped = _shape_for_frontend(all_sites_df, top5_dfs)
     _CACHE["data"] = shaped
     _CACHE["fetched_at"] = now
     return shaped

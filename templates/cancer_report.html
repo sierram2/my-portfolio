@@ -208,6 +208,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
       const cancerData = {{ data|tojson }};
 
@@ -255,11 +256,11 @@
       new Chart(document.getElementById("trendChart"), {
         type: "line",
         data: {
-          labels: cancerData.trend_dual.years,
+          labels: cancerData.trend_series,
           datasets: [
             {
               label: "Cancer prevalence",
-              data: cancerData.trend_dual.cancer_prevalence,
+              data: cancerData.trend_series[0].values,
               borderColor: "#dc2626",
               backgroundColor: "rgba(220, 38, 38, 0.12)",
               yAxisID: "y",
@@ -267,7 +268,7 @@
             },
             {
               label: "PM2.5 annual average",
-              data: cancerData.trend_dual.pm25_annual_avg,
+              data: cancerData.trend_series[1].values,
               borderColor: "#16a34a",
               backgroundColor: "rgba(22, 163, 74, 0.12)",
               yAxisID: "y1",
@@ -336,6 +337,56 @@
           }
         }
       });
+
+      const trendLabels = Object.keys(cancerData.trend_series);
+      const trendDatasets = trendLabels.map((label, index) => ({
+        label,
+        data: cancerData.trend_series[label].values,
+        borderColor: [
+          "#dc2626",
+          "#2563eb",
+          "#16a34a",
+          "#7c3aed",
+          "#ea580c"
+        ][index],
+        backgroundColor: "transparent",
+        tension: 0.25,
+        fill: false
+      }));
+
+      new Chart(document.getElementById("trendChart"), {
+        type: "line",
+        data: {
+          labels: trendLabels.length
+            ? cancerData.trend_series[trendLabels[0]].years
+            : [],
+          datasets: trendDatasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: "bottom"
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              title: {
+                display: true,
+                text: "Average reported prevalence"
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: "Year"
+              }
+            }
+          }
+        }
+      });
     </script>
   {% else %}
     <div class="report-status">
@@ -343,4 +394,148 @@
     </div>
   {% endif %}
 </main>
+{% endblock %}
+
+{% block footer %}
+{% if data %}
+  <footer>
+    <p>
+      <strong>Latest cancer prevalence year:</strong> {{ data.latest_year }}
+    </p>
+  </footer>
+{% endif %}
+{% endblock %}
+
+{% block js %}
+{% if data %}
+  <script>
+    const cancerData = {{ data|tojson }};
+
+    const chartDefaults = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: "bottom"
+        }
+      }
+    };
+
+    new Chart(document.getElementById("prevalenceChart"), {
+      type: "bar",
+      data: {
+        labels: cancerData.yearly_prevalence.years,
+        datasets: [{
+          label: "Average prevalence",
+          data: cancerData.yearly_prevalence.values,
+          backgroundColor: "#2563eb",
+          borderRadius: 5
+        }]
+      },
+      options: {
+        ...chartDefaults,
+        scales: {
+          y: {
+            beginAtZero: false,
+            title: {
+              display: true,
+              text: "Prevalence"
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: "Year"
+            }
+          }
+        }
+      }
+    });
+
+    new Chart(document.getElementById("trendChart"), {
+      type: "line",
+      data: {
+        labels: cancerData.trend_series,
+        datasets: [
+          {
+            label: "Cancer prevalence",
+            data: cancerData.trend_series[0].values,
+            borderColor: "#dc2626",
+            backgroundColor: "rgba(220, 38, 38, 0.12)",
+            yAxisID: "y",
+            tension: 0.25
+          },
+          {
+            label: "PM2.5 annual average",
+            data: cancerData.trend_series[1].values,
+            borderColor: "#16a34a",
+            backgroundColor: "rgba(22, 163, 74, 0.12)",
+            yAxisID: "y1",
+            tension: 0.25
+          }
+        ]
+      },
+      options: {
+        ...chartDefaults,
+        scales: {
+          y: {
+            type: "linear",
+            position: "left",
+            title: {
+              display: true,
+              text: "Cancer prevalence"
+            }
+          },
+          y1: {
+            type: "linear",
+            position: "right",
+            grid: {
+              drawOnChartArea: false
+            },
+            title: {
+              display: true,
+              text: "PM2.5"
+            }
+          }
+        }
+      }
+    });
+
+    const distribution = cancerData.distributions.cancer_prevalence;
+
+    new Chart(document.getElementById("distributionChart"), {
+      type: "bar",
+      data: {
+        labels: distribution.bins,
+        datasets: [{
+          label: "Number of counties",
+          data: distribution.counts,
+          backgroundColor: "#7c3aed",
+          borderRadius: 5
+        }]
+      },
+      options: {
+        ...chartDefaults,
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Prevalence range"
+            }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0
+            },
+            title: {
+              display: true,
+              text: "Counties"
+            }
+          }
+        }
+      }
+    });
+  </script>
+{% endif %}
 {% endblock %}
