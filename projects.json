@@ -15,12 +15,6 @@
     "id": 3,
     "title": "Cancer Data Analysis",
     "description": "Statistical analysis exploring cancer trends and patterns.",
-    "link": "/blog/cancer-analysis"
-  },
-  {
-    "id": 4,
-    "title": "Another Project",
-    "description": "Short description here.",
-    "link": "#"
+    "link": "/blog/cancer_report"
   }
 ]

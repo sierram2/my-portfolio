@@ -1,7 +1,8 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 from google.oauth2 import service_account
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from analytics.ga_daily import get_active_users_json, get_traffic_sources
+from CDC_Review import get_cancer_dashboard_data
 import json
 import os 
 
@@ -27,6 +28,20 @@ PROPERTY_ID = "504615296"
 def active_users():
     df = get_active_users_json(client, PROPERTY_ID)
     return df.to_json(orient="records", date_format="iso")
+
+# API route for the cancer dashboard data (used by cancer_report.html's Chart.js,
+# and reusable if you want to pull the same data into another page later)
+@app.route("/api/cancer-data")
+def cancer_data():
+    force_refresh = request.args.get("refresh") == "1"
+    try:
+        data = get_cancer_dashboard_data(force_refresh=force_refresh)
+    except RuntimeError as e:
+        # Missing API token, etc. — surface a clean error instead of a 500 traceback
+        return jsonify({"error": str(e)}), 503
+    except Exception as e:
+        return jsonify({"error": "Failed to fetch CDC data", "detail": str(e)}), 502
+    return jsonify(data)
 
 # Projects page route
 @app.route("/projects")
@@ -65,6 +80,25 @@ def ga4_report():
 
 @app.route("/blog/cancer-analysis")
 def cancer_analysis():
+    try:
+        data = get_cancer_dashboard_data()
+        error = None
+    except RuntimeError as exc:
+        data = None
+        error = str(exc)
+    except Exception:
+        app.logger.exception("Unable to load cancer dashboard")
+        data = None
+        error = "The CDC data is temporarily unavailable."
+
+    return render_template(
+        "cancer_report.html",
+        data=data,
+        error=error
+    )
+
+@app.route("/blog/cancer_report")
+def cancer_report():
     return render_template("cancer_report.html")
 
 @app.route("/blog/<post_id>")
@@ -79,6 +113,15 @@ def render_page(page):
         return render_template(f"{page}.html")
     except:
         return render_template("404.html"), 404
+
+@app.route("/api/cancer-dashboard")
+def cancer_dashboard_api():
+    try:
+        data = get_cancer_dashboard_data()
+        return jsonify(data)
+    except Exception as error:
+        app.logger.exception("Cancer dashboard data request failed")
+        return jsonify({"error": str(error)}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
