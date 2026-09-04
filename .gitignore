@@ -8,3 +8,5 @@ __pycache__/
 venv/
 .env
 credentials.json
+CDC_API_TOKEN.txt
+CDC_Cancer_Analysis_Standalone.py

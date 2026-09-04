@@ -10,15 +10,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     {% block head_extra %}{% endblock %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4M67CW2DBG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-4M67CW2DBG');
+    </script>
 </head>
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4M67CW2DBG"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-4M67CW2DBG');
-</script>
 
 <body>
     <div class="background"></div>

@@ -1,541 +1,566 @@
 {% extends "base.html" %}
 
-{% block title %}Cancer Data Analysis{% endblock %}
+{% block title %}Texas Cancer Data Analysis — monique sierra{% endblock %}
+
+{% block head_extra %}
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+<style>
+    .post-meta {
+        font-size: 18px;
+        color: #666;
+        margin-bottom: 8px;
+    }
+
+    .data-timestamp {
+        font-size: 15px;
+        color: #999;
+        margin-bottom: 28px;
+    }
+
+    .report-panel {
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        padding: 28px;
+        border-radius: 2px;
+        margin-bottom: 28px;
+    }
+
+    .report-panel h3 {
+        font-family: var(--font-sans);
+        font-size: 22.5px;
+        font-weight: normal;
+        color: var(--black);
+        margin: 0 0 8px;
+        border-bottom: 1px solid var(--red);
+        padding-bottom: 16px;
+    }
+
+    /* Explicit, non-inherited text color — fixes invisible white-on-glass text */
+    .insights-list {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0 0;
+    }
+
+    .insights-list li {
+        color: #0a0a0a !important;
+        font-family: var(--font-sans);
+        font-size: 17px;
+        line-height: 1.6;
+        padding: 12px 0 12px 26px;
+        position: relative;
+    }
+
+    .insights-list li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 21px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--red);
+    }
+
+    .insights-list li + li {
+        border-top: 1px solid rgba(0,0,0,0.06);
+    }
+
+    #tx-map {
+        height: 560px;
+        width: 100%;
+    }
+
+    .chart-wrapper {
+        position: relative;
+        height: 340px;
+    }
+
+    .chart-note {
+        text-align: center;
+        margin-top: 14px;
+        font-size: 16px;
+        color: #888;
+    }
+
+    .methodology-text {
+        color: #0a0a0a !important;
+        font-family: var(--font-sans);
+        font-size: 16px;
+        line-height: 1.7;
+        margin: 0 0 16px;
+    }
+
+    .methodology-list {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .methodology-list li {
+        color: #0a0a0a !important;
+        font-family: var(--font-sans);
+        font-size: 16px;
+        line-height: 1.7;
+        margin-bottom: 10px;
+    }
+
+    .error-panel {
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        padding: 28px;
+        border-left: 3px solid var(--red);
+        border-radius: 2px;
+        color: #0a0a0a;
+    }
+
+    .county-search-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 16px;
+    }
+
+    .county-search-row input {
+        flex: 1;
+        padding: 10px 14px;
+        font-family: var(--font-sans);
+        font-size: 16px;
+        border: 1px solid rgba(0,0,0,0.2);
+        border-radius: 2px;
+        background: #fff;
+        color: #0a0a0a;
+    }
+
+    .county-search-row button {
+        padding: 10px 22px;
+        font-family: var(--font-sans);
+        font-size: 16px;
+        border: none;
+        border-radius: 2px;
+        background: var(--red);
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .county-search-row button:hover {
+        opacity: 0.9;
+    }
+
+    .county-result-card {
+        margin-top: 18px;
+        padding: 18px;
+        border: 1px solid rgba(0,0,0,0.08);
+        border-radius: 2px;
+        background: rgba(255,255,255,0.5);
+        color: #0a0a0a;
+        font-family: var(--font-sans);
+    }
+
+    .county-result-card .county-result-name {
+        font-size: 19px;
+        margin-bottom: 6px;
+    }
+
+    .county-result-card .county-result-value {
+        font-size: 15px;
+        color: #333;
+    }
+
+    .county-result-card .county-result-compare {
+        font-size: 15px;
+        margin-top: 6px;
+        font-weight: 600;
+    }
+
+    .county-result-card.above-average .county-result-compare { color: var(--red); }
+    .county-result-card.below-average .county-result-compare { color: #1a7a3a; }
+
+    .county-search-error {
+        margin-top: 14px;
+        font-size: 15px;
+        color: #888;
+    }
+
+    .measure-table-wrap {
+        overflow-x: auto;
+    }
+
+    .measure-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: var(--font-sans);
+        color: #0a0a0a;
+    }
+
+    .measure-table caption {
+        text-align: left;
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    .measure-table th,
+    .measure-table td {
+        text-align: left;
+        padding: 10px 14px;
+        font-size: 15px;
+        white-space: nowrap;
+    }
+
+    .measure-table th {
+        font-weight: 600;
+        border-bottom: 1px solid rgba(0,0,0,0.2);
+        color: #333;
+    }
+
+    .measure-table td {
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .measure-table tr.measure-table-total td {
+        font-weight: 600;
+        border-top: 1px solid rgba(0,0,0,0.2);
+        border-bottom: none;
+    }
+
+    .measure-table-note {
+        margin-top: 16px;
+        font-size: 15px;
+        color: #333;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<style>
-  .cancer-report {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem 1rem 4rem;
-  }
+<article>
+    <div class="intro-header-align">
+        <h1>Texas Cancer Data Analysis</h1>
+    </div>
+    <p class="post-meta">Live dashboard tracking county-level cancer prevalence and statewide incidence trends via the CDC Environmental Public Health Tracking Network API.</p>
 
-  .report-header {
-    margin-bottom: 2rem;
-  }
+    {% if error %}
+    <div class="error-panel">
+        <p><strong>Data unavailable:</strong> {{ error }}</p>
+        <p>Set the <code>EPHTN_API_TOKEN</code> environment variable (Render) or add a local
+           <code>CDC_API_TOKEN.txt</code> file, then reload this page.</p>
+    </div>
+    {% else %}
 
-  .report-header h1 {
-    margin-bottom: 0.75rem;
-  }
+    <p class="data-timestamp" id="dataTimestamp">Data pull timestamp: — | Latest Data Year: <strong>{{ data.latest_year }}</strong></p>
 
-  .report-subtitle {
-    max-width: 760px;
-    line-height: 1.7;
-    opacity: 0.85;
-  }
+    <div class="report-panel">
+        <h3>5 Top Insights</h3>
+        <ul class="insights-list">
+            {% for point in data.insights %}
+            <li>{{ point }}</li>
+            {% endfor %}
+        </ul>
+    </div>
 
-  .report-status,
-  .report-error,
-  .report-caveat {
-    border-radius: 10px;
-    padding: 1rem 1.25rem;
-    margin: 1rem 0 1.5rem;
-  }
+    <div class="report-panel">
+        <h3>Look Up a ZIP Code or County</h3>
+        <div class="county-search-row">
+            <input type="text" id="countySearchInput" placeholder="e.g. 78701 or Travis County" autocomplete="off">
+            <button id="countySearchBtn" type="button">Search</button>
+        </div>
+        <div id="countySearchResult"></div>
+    </div>
 
-  .report-status {
-    background: rgba(37, 99, 235, 0.1);
-  }
+    <div class="report-panel">
+        <h3>County-Level Cancer Prevalence (All Sites) — {{ data.latest_year }}</h3>
+        <div id="tx-map"></div>
+        <p class="chart-note">Darker = higher crude prevalence. Gray/blank counties had no reportable data for {{ data.latest_year }} due to cell-size suppression.</p>
+    </div>
 
-  .report-error {
-    background: rgba(220, 38, 38, 0.1);
-    color: #b91c1c;
-  }
+    <div class="report-panel">
+        <h3>Top 5 Cancer Types — Statewide Trend</h3>
+        <div class="chart-wrapper">
+            <canvas id="trendChart"></canvas>
+        </div>
+        <p class="chart-note">Statewide age-adjusted incidence rate (new cases per 100,000 people per year) by cancer type — a different statistic from the crude prevalence map above. {{ data.caveat }}</p>
+    </div>
 
-  .report-caveat {
-    background: rgba(234, 179, 8, 0.12);
-    line-height: 1.6;
-  }
+    <div class="report-panel">
+        <h3>Measure Comparison — Rate vs. Case Count vs. Prevalence</h3>
+        <div class="measure-table-wrap">
+            <table class="measure-table">
+                <caption>All figures are statewide (Texas), each using that measure's own latest available data year.</caption>
+                <thead>
+                    <tr>
+                        <th>Cancer Type</th>
+                        <th>Age-Adjusted Incidence Rate<br>(per 100,000 / year)</th>
+                        <th>Annual New Cases</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data.measure_table.rows %}
+                    <tr>
+                        <td>{{ row.label }}</td>
+                        <td>{% if row.age_adjusted_rate is not none %}{{ row.age_adjusted_rate }} ({{ row.rate_year }}){% else %}—{% endif %}</td>
+                        <td>{% if row.annual_cases is not none %}{{ "{:,}".format(row.annual_cases) }} ({{ row.count_year }}){% else %}—{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="measure-table-total">
+                        <td>All Cancer Types (Total)</td>
+                        <td>
+                            {% if data.measure_table.total_incidence.age_adjusted_rate is not none %}
+                                {{ data.measure_table.total_incidence.age_adjusted_rate }} ({{ data.measure_table.total_incidence.year }})
+                            {% else %}—{% endif %}
+                        </td>
+                        <td>—</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="measure-table-note">
+            <strong>For comparison — a different kind of statistic:</strong> the county map above shows
+            <strong>crude prevalence</strong>, not incidence — a model-based estimate that
+            {% if data.measure_table.all_sites_crude_prevalence.value is not none %}
+                {{ data.measure_table.all_sites_crude_prevalence.value }}%
+            {% else %}an estimated{% endif %}
+            of Texas adults have EVER been diagnosed with any cancer
+            ({{ data.measure_table.all_sites_crude_prevalence.year }}), not adjusted for age. It isn't
+            directly comparable to the incidence rates above — see "How This Data Was Built" below for
+            the full distinction between prevalence and incidence.
+        </p>
+    </div>
 
-  .chart-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem;
-    margin: 1.5rem 0;
-  }
+    {% if data.smoking_label %}
+    <div class="report-panel">
+        <h3>Smoking Prevalence — Statewide Trend (for context)</h3>
+        <div class="chart-wrapper">
+            <canvas id="smokingChart"></canvas>
+        </div>
+        <p class="chart-note">Measure: {{ data.smoking_label }}. Shown for context only — see the limitations note below on why this isn't a tested link to cancer rates.</p>
+    </div>
+    {% endif %}
 
-  .chart-card,
-  .table-card {
-    background: var(--card-bg, #ffffff);
-    border: 1px solid var(--border-color, #d1d5db);
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-  }
+    <div class="report-panel">
+        <h3>How This Data Was Built</h3>
+        <p class="methodology-text"><strong>Source.</strong> {{ data.methodology.source }}</p>
+        <p class="methodology-text"><strong>What's being measured.</strong> {{ data.methodology.measure_definition }}</p>
+        <p class="methodology-text"><strong>How the top 5 were chosen.</strong> {{ data.methodology.top5_method }}</p>
+        <p class="methodology-text"><strong>Limitations.</strong></p>
+        <ul class="methodology-list">
+            {% for point in data.methodology.limitations %}
+            <li>{{ point }}</li>
+            {% endfor %}
+        </ul>
+    </div>
 
-  .chart-card h2,
-  .table-card h2 {
-    font-size: 1.1rem;
-    margin: 0 0 1rem;
-  }
+    {% endif %}
+</article>
 
-  .chart-container {
-    position: relative;
-    height: 330px;
-  }
+{% if not error %}
+<script>
+    const REPORT_DATA_TS = {{ data.generated_at }};
+    document.getElementById("dataTimestamp").innerHTML =
+        `Data pull timestamp: ${new Date(REPORT_DATA_TS * 1000).toLocaleString()} | Latest Data Year: <strong>{{ data.latest_year }}</strong>`;
 
-  .wide-card {
-    grid-column: 1 / -1;
-  }
-
-  .table-wrapper {
-    overflow-x: auto;
-  }
-
-  .county-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .county-table th,
-  .county-table td {
-    padding: 0.7rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color, #e5e7eb);
-  }
-
-  .county-table th {
-    font-weight: 700;
-  }
-
-  .county-columns {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem;
-  }
-
-  @media (max-width: 800px) {
-    .chart-grid,
-    .county-columns {
-      grid-template-columns: 1fr;
+    // ── Choropleth map (Plotly, built server-side in CDC_Review.py) ──
+    // Wrapped in try/catch so a Plotly failure can't silently prevent
+    // the trend chart below from ever running.
+    let mapLocations = [];  // filled in below if the map renders successfully — used by the search highlight
+    try {
+        const mapSpec = {{ data.map_fig_json | safe }};
+        Plotly.newPlot("tx-map", mapSpec.data, mapSpec.layout, { responsive: true, displayModeBar: false });
+        mapLocations = mapSpec.data[0].locations || [];
+    } catch (err) {
+        console.error("Map failed to render:", err);
+        document.getElementById("tx-map").innerHTML =
+            '<p style="color:#888;">Map failed to render — see console for details.</p>';
     }
 
-    .wide-card {
-      grid-column: auto;
+    // ── ZIP / county search ───────────────────────────────────────────
+    const countyValues = {{ data.county_values | tojson }};   // { fips: {name, value} }
+    const stateAverage = {{ (data.state_average or 0) | tojson }};
+
+    function normalizeCountyName(name) {
+        return String(name).trim().toLowerCase().replace(/\s*county\s*$/i, "");
     }
-  }
-</style>
 
-<main class="cancer-report">
-  <header class="report-header">
-    <h1>Cancer Data Analysis</h1>
-    <p class="report-subtitle">
-      An analysis of county-level cancer prevalence, PM2.5 air pollution,
-      and water quality data for Texas.
-    </p>
-  </header>
+    function highlightCounty(fips) {
+        if (!mapLocations.length) return;  // map didn't render, nothing to highlight
+        const idx = mapLocations.indexOf(fips);
+        if (idx === -1) return;
+        const borderColors = mapLocations.map((_, i) => (i === idx ? "#df2935" : "#ffffff"));
+        const borderWidths = mapLocations.map((_, i) => (i === idx ? 3 : 0.75));
+        Plotly.restyle("tx-map", { "marker.line.color": [borderColors], "marker.line.width": [borderWidths] }, [0]);
+    }
 
-  {% if error %}
-    <div class="report-error" role="alert">
-      {{ error }}
-    </div>
-  {% elif data %}
-    <div class="report-status">
-      Data loaded successfully. Latest cancer prevalence year:
-      <strong>{{ data.latest_year }}</strong>
-    </div>
-
-    <section class="chart-grid" aria-label="Cancer data visualizations">
-      <article class="chart-card">
-        <h2>Average Cancer Prevalence by Year</h2>
-        <div class="chart-container">
-          <canvas id="prevalenceChart"></canvas>
-        </div>
-      </article>
-
-      <article class="chart-card">
-        <h2>Cancer Prevalence and PM2.5 Trend</h2>
-        <div class="chart-container">
-          <canvas id="trendChart"></canvas>
-        </div>
-      </article>
-
-      <article class="chart-card wide-card">
-        <h2>County Cancer Prevalence Distribution</h2>
-        <div class="chart-container">
-          <canvas id="distributionChart"></canvas>
-        </div>
-      </article>
-    </section>
-
-    <section class="county-columns">
-      <article class="table-card">
-        <h2>Highest Prevalence Counties</h2>
-        <div class="table-wrapper">
-          <table class="county-table">
-            <thead>
-              <tr>
-                <th>County</th>
-                <th>Prevalence</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for county in data.top_counties %}
-                <tr>
-                  <td>{{ county.geo }}</td>
-                  <td>{{ "%.2f"|format(county.cancer_prevalence) }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </article>
-
-      <article class="table-card">
-        <h2>Lowest Prevalence Counties</h2>
-        <div class="table-wrapper">
-          <table class="county-table">
-            <thead>
-              <tr>
-                <th>County</th>
-                <th>Prevalence</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for county in data.bottom_counties %}
-                <tr>
-                  <td>{{ county.geo }}</td>
-                  <td>{{ "%.2f"|format(county.cancer_prevalence) }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </article>
-    </section>
-
-    <div class="report-caveat">
-      {{ data.caveat }}
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script>
-      const cancerData = {{ data|tojson }};
-
-      const chartDefaults = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: "bottom"
-          }
+    function renderSearchResult(result) {
+        const el = document.getElementById("countySearchResult");
+        if (!result) {
+            el.innerHTML = '<p class="county-search-error">No match found for that zip code or county name. Try a 5-digit Texas zip, or a county name like "Travis" or "Travis County".</p>';
+            return;
         }
-      };
+        const { name, value, avg } = result;
+        const diff = value - avg;
+        const diffPct = avg ? Math.abs((diff / avg) * 100).toFixed(0) : "—";
+        const cls = diff > 0 ? "above-average" : (diff < 0 ? "below-average" : "");
+        const compareText = diff === 0
+            ? "Right at the statewide average."
+            : `${diffPct}% ${diff > 0 ? "above" : "below"} the statewide average of ${avg}%.`;
+        el.innerHTML = `
+            <div class="county-result-card ${cls}">
+                <div class="county-result-name">${name}</div>
+                <div class="county-result-value">Crude cancer prevalence: <strong>${value}%</strong></div>
+                <div class="county-result-compare">${compareText}</div>
+            </div>
+        `;
+    }
 
-      new Chart(document.getElementById("prevalenceChart"), {
-        type: "bar",
-        data: {
-          labels: cancerData.yearly_prevalence.years,
-          datasets: [{
-            label: "Average prevalence",
-            data: cancerData.yearly_prevalence.values,
-            backgroundColor: "#2563eb",
-            borderRadius: 5
-          }]
-        },
-        options: {
-          ...chartDefaults,
-          scales: {
-            y: {
-              beginAtZero: false,
-              title: {
-                display: true,
-                text: "Prevalence"
-              }
-            },
-            x: {
-              title: {
-                display: true,
-                text: "Year"
-              }
+    function runSearch() {
+        const raw = document.getElementById("countySearchInput").value.trim();
+        if (!raw) return;
+
+        // Zip code: 5 digits -> look up via crosswalk fetched from static file
+        if (/^\d{5}$/.test(raw)) {
+            fetch("/static/tx_zip_county.json")
+                .then(r => r.json())
+                .then(zipCrosswalk => {
+                    const fips = zipCrosswalk[raw];
+                    const county = fips ? countyValues[fips] : null;
+                    if (county) {
+                        renderSearchResult({ name: county.name, value: county.value, avg: stateAverage });
+                        highlightCounty(fips);
+                    } else {
+                        renderSearchResult(null);
+                    }
+                })
+                .catch(err => {
+                    console.error("Zip crosswalk fetch failed:", err);
+                    renderSearchResult(null);
+                });
+            return;
+        }
+
+        // Otherwise treat it as a county name
+        const target = normalizeCountyName(raw);
+        for (const [fips, info] of Object.entries(countyValues)) {
+            if (normalizeCountyName(info.name) === target) {
+                renderSearchResult({ name: info.name, value: info.value, avg: stateAverage });
+                highlightCounty(fips);
+                return;
             }
-          }
         }
-      });
+        renderSearchResult(null);
+    }
 
-      new Chart(document.getElementById("trendChart"), {
+    document.getElementById("countySearchBtn").addEventListener("click", runSearch);
+    document.getElementById("countySearchInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") runSearch();
+    });
+
+    // ── Top 5 cancer types — multi-line trend chart ──────────────────
+    const trendSeries = {{ data.trend_series | tojson }};
+    const seriesLabels = Object.keys(trendSeries);
+    const colorCycle = ["#df2935", "#0a0a0a", "#3182bd", "#8856a7", "#e6a817"];
+
+    // Union of all years across series, sorted, so every line shares one x-axis
+    const allYears = Array.from(new Set(
+        seriesLabels.flatMap(l => trendSeries[l].years)
+    )).sort((a, b) => a - b);
+
+    const datasets = seriesLabels.map((label, i) => {
+        const yearToValue = {};
+        trendSeries[label].years.forEach((y, idx) => { yearToValue[y] = trendSeries[label].values[idx]; });
+        const data = allYears.map(y => (y in yearToValue ? yearToValue[y] : null));
+        return {
+            label: label,
+            data: data,
+            borderColor: colorCycle[i % colorCycle.length],
+            backgroundColor: colorCycle[i % colorCycle.length],
+            tension: 0.3,
+            pointRadius: 3,
+            spanGaps: true,
+            datalabels: {
+                display: (ctx) => ctx.dataIndex === ctx.dataset.data.length - 1,
+                align: "right",
+                offset: 6,
+                color: colorCycle[i % colorCycle.length],
+                font: { size: 12, weight: "bold" },
+                formatter: () => label,
+            },
+        };
+    });
+
+    if (seriesLabels.length === 0) {
+        console.warn("trend_series was empty — no top-5 cancer measures came back from CDC_Review.py this pull.");
+        document.querySelector(".chart-wrapper").outerHTML =
+            '<p style="color:#888;">No trend data available for this pull (see debug.top5_measures_found / debug.top5_ranking_failures server-side).</p>';
+    } else {
+    new Chart(document.getElementById("trendChart").getContext('2d'), {
         type: "line",
-        data: {
-          labels: cancerData.trend_series,
-          datasets: [
-            {
-              label: "Cancer prevalence",
-              data: cancerData.trend_series[0].values,
-              borderColor: "#dc2626",
-              backgroundColor: "rgba(220, 38, 38, 0.12)",
-              yAxisID: "y",
-              tension: 0.25
-            },
-            {
-              label: "PM2.5 annual average",
-              data: cancerData.trend_series[1].values,
-              borderColor: "#16a34a",
-              backgroundColor: "rgba(22, 163, 74, 0.12)",
-              yAxisID: "y1",
-              tension: 0.25
-            }
-          ]
-        },
+        plugins: [ChartDataLabels],
+        data: { labels: allYears, datasets: datasets },
         options: {
-          ...chartDefaults,
-          scales: {
-            y: {
-              type: "linear",
-              position: "left",
-              title: {
-                display: true,
-                text: "Cancer prevalence"
-              }
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: { padding: { right: 110 } },
+            plugins: {
+                legend: { display: false },
+                datalabels: { display: true },
+                tooltip: {
+                    backgroundColor: "#0a0a0a", titleColor: "#df2935", bodyColor: "#fff",
+                    cornerRadius: 2, padding: 10,
+                },
             },
-            y1: {
-              type: "linear",
-              position: "right",
-              grid: {
-                drawOnChartArea: false
-              },
-              title: {
-                display: true,
-                text: "PM2.5"
-              }
-            }
-          }
-        }
-      });
-
-      const distribution = cancerData.distributions.cancer_prevalence;
-
-      new Chart(document.getElementById("distributionChart"), {
-        type: "bar",
-        data: {
-          labels: distribution.bins,
-          datasets: [{
-            label: "Number of counties",
-            data: distribution.counts,
-            backgroundColor: "#7c3aed",
-            borderRadius: 5
-          }]
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: "rgba(0,0,0,0.05)" },
+                    ticks: { color: "#888" },
+                    title: { display: true, text: "Age-adjusted incidence rate (per 100,000)" },
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: "#888" },
+                },
+            },
         },
-        options: {
-          ...chartDefaults,
-          scales: {
-            x: {
-              title: {
-                display: true,
-                text: "Prevalence range"
-              }
-            },
-            y: {
-              beginAtZero: true,
-              ticks: {
-                precision: 0
-              },
-              title: {
-                display: true,
-                text: "Counties"
-              }
-            }
-          }
-        }
-      });
-
-      const trendLabels = Object.keys(cancerData.trend_series);
-      const trendDatasets = trendLabels.map((label, index) => ({
-        label,
-        data: cancerData.trend_series[label].values,
-        borderColor: [
-          "#dc2626",
-          "#2563eb",
-          "#16a34a",
-          "#7c3aed",
-          "#ea580c"
-        ][index],
-        backgroundColor: "transparent",
-        tension: 0.25,
-        fill: false
-      }));
-
-      new Chart(document.getElementById("trendChart"), {
-        type: "line",
-        data: {
-          labels: trendLabels.length
-            ? cancerData.trend_series[trendLabels[0]].years
-            : [],
-          datasets: trendDatasets
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: "bottom"
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: false,
-              title: {
-                display: true,
-                text: "Average reported prevalence"
-              }
-            },
-            x: {
-              title: {
-                display: true,
-                text: "Year"
-              }
-            }
-          }
-        }
-      });
-    </script>
-  {% else %}
-    <div class="report-status">
-      No CDC data is currently available.
-    </div>
-  {% endif %}
-</main>
-{% endblock %}
-
-{% block footer %}
-{% if data %}
-  <footer>
-    <p>
-      <strong>Latest cancer prevalence year:</strong> {{ data.latest_year }}
-    </p>
-  </footer>
-{% endif %}
-{% endblock %}
-
-{% block js %}
-{% if data %}
-  <script>
-    const cancerData = {{ data|tojson }};
-
-    const chartDefaults = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: "bottom"
-        }
-      }
-    };
-
-    new Chart(document.getElementById("prevalenceChart"), {
-      type: "bar",
-      data: {
-        labels: cancerData.yearly_prevalence.years,
-        datasets: [{
-          label: "Average prevalence",
-          data: cancerData.yearly_prevalence.values,
-          backgroundColor: "#2563eb",
-          borderRadius: 5
-        }]
-      },
-      options: {
-        ...chartDefaults,
-        scales: {
-          y: {
-            beginAtZero: false,
-            title: {
-              display: true,
-              text: "Prevalence"
-            }
-          },
-          x: {
-            title: {
-              display: true,
-              text: "Year"
-            }
-          }
-        }
-      }
     });
-
-    new Chart(document.getElementById("trendChart"), {
-      type: "line",
-      data: {
-        labels: cancerData.trend_series,
-        datasets: [
-          {
-            label: "Cancer prevalence",
-            data: cancerData.trend_series[0].values,
-            borderColor: "#dc2626",
-            backgroundColor: "rgba(220, 38, 38, 0.12)",
-            yAxisID: "y",
-            tension: 0.25
-          },
-          {
-            label: "PM2.5 annual average",
-            data: cancerData.trend_series[1].values,
-            borderColor: "#16a34a",
-            backgroundColor: "rgba(22, 163, 74, 0.12)",
-            yAxisID: "y1",
-            tension: 0.25
-          }
-        ]
-      },
-      options: {
-        ...chartDefaults,
-        scales: {
-          y: {
-            type: "linear",
-            position: "left",
-            title: {
-              display: true,
-              text: "Cancer prevalence"
-            }
-          },
-          y1: {
-            type: "linear",
-            position: "right",
-            grid: {
-              drawOnChartArea: false
+    }
+    // ── Optional: smoking prevalence trend (context chart) ──────────
+    const smokingTrend = {{ data.smoking_trend | tojson }};
+    if (smokingTrend.years && smokingTrend.years.length) {
+        new Chart(document.getElementById("smokingChart").getContext('2d'), {
+            type: "line",
+            data: {
+                labels: smokingTrend.years,
+                datasets: [{
+                    label: "{{ data.smoking_label or 'Smoking prevalence' }}",
+                    data: smokingTrend.values,
+                    borderColor: "#e6a817",
+                    backgroundColor: "#e6a817",
+                    tension: 0.3,
+                    pointRadius: 3,
+                }],
             },
-            title: {
-              display: true,
-              text: "PM2.5"
-            }
-          }
-        }
-      }
-    });
-
-    const distribution = cancerData.distributions.cancer_prevalence;
-
-    new Chart(document.getElementById("distributionChart"), {
-      type: "bar",
-      data: {
-        labels: distribution.bins,
-        datasets: [{
-          label: "Number of counties",
-          data: distribution.counts,
-          backgroundColor: "#7c3aed",
-          borderRadius: 5
-        }]
-      },
-      options: {
-        ...chartDefaults,
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: "Prevalence range"
-            }
-          },
-          y: {
-            beginAtZero: true,
-            ticks: {
-              precision: 0
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: "#0a0a0a", titleColor: "#df2935", bodyColor: "#fff",
+                        cornerRadius: 2, padding: 10,
+                    },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: "rgba(0,0,0,0.05)" },
+                        ticks: { color: "#888" },
+                    },
+                    x: { grid: { display: false }, ticks: { color: "#888" } },
+                },
             },
-            title: {
-              display: true,
-              text: "Counties"
-            }
-          }
-        }
-      }
-    });
-  </script>
+        });
+    }
+</script>
 {% endif %}
 {% endblock %}

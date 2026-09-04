@@ -14,11 +14,9 @@
   --glass-border: rgba(0, 0, 0, 0.10);
   --glass-blur:   blur(14px);
 
---font-serif: 'Futura';
---font-sans:  'Futura PT', 'Futura', 'Century Gothic', Trebuchet MS, sans-serif;
---font-sans-bold:  'Futura Bold', 'comic sans' sans-serif;
-}
-
+  --font-serif: 'Futura';
+  --font-sans:  'Futura PT', 'Futura', 'Century Gothic', Trebuchet MS, sans-serif;
+  --font-sans-bold:  'Futura PT', 'Futura', 'Century Gothic', Trebuchet MS, sans-serif;
 
 /* ===== RESET & BASE ===== */
 *, *::before, *::after {
