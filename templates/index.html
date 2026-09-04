@@ -3,33 +3,46 @@
 
 {% block content %}
 <section id="home-hero" class="content-wrapper" data-aos="fade-up">
-    <div class="hero-main">
-        <div class="intro-header-align">
-            <h1>
-                <img src="{{ url_for('static', filename='images/transparent_cartoon_me.png') }}" 
-                     alt="Monique" class="inline-cartoon">
-                Hi, I'm Monique Sierra
-            </h1>
+    <div class="home-columns">
+        <div class="home-about">
+            <div class="intro-header-align">
+                <h1>
+                    <img src="{{ url_for('static', filename='images/transparent_cartoon_me.png') }}"
+                         alt="Monique" class="inline-cartoon">
+                    Hi, I'm Monique Sierra
+                </h1>
+            </div>
+
+            <h2 class="hero-subtitle">Data Scientist and Strategic Analyst</h2>
+
+            <div class="hero-description">
+            <p>
+                I'm currently an analyst at UT Health San Antonio in the Office of Strategic Planning. With the support from my team, I help forecast various healthcare indicators and uncover trends across our city. Whether we’re measuring patient encounters or procedural volumes, defining the question and understanding the business problem at hand is essential to leveraging data and making strategic decisions. I deeply appreciate the collaboration and insight my team and our various data partners provide, as well as the never-ending depth of our work that always leaves more room for exploration and improvement.
+            </p>
+
+            <p>
+                Aside from analytics, I spend my time as a recreational jogger, dog lover, and tea enthusiast. If your running feels difficult, it probably means you’re going too fast! I enjoy the challenge of endurance sports, as well as the stats and progress I see with a consistent running routine. I normally spend my afternoons chauffeuring my beloved husky-malinois, Lucy, to either the park or the trails to run.
+            </p>
+
+            <p>
+                Words are much harder than numbers, in my opinion. I’m a much better analyst than writer, and I hope my site is evidence of this.
+            </p>
+
+                <div class="cta-area">
+                    <a href="/blog" class="cta-secondary">Read My Thoughts</a>
+                </div>
+            </div>
         </div>
-        
-        <h2 class="hero-subtitle">Data Scientist and Strategic Analyst</h2>
 
-        <div class="hero-description">
-        <p>
-            I'm currently an analyst at UT Health San Antonio in the Office of Strategic Planning. With the support from my team, I help forecast various healthcare indicators and uncover trends across our city. Whether we’re measuring patient encounters or procedural volumes, defining the question and understanding the business problem at hand is essential to leveraging data and making strategic decisions. I deeply appreciate the collaboration and insight my team and our various data partners provide, as well as the never-ending depth of our work that always leaves more room for exploration and improvement. 
-        </p>
-
-        <p>
-            Aside from analytics, I spend my time as a recreational jogger, dog lover, and tea enthusiast. If your running feels difficult, it probably means you’re going too fast! I enjoy the challenge of endurance sports, as well as the stats and progress I see with a consistent running routine. I normally spend my afternoons chauffeuring my beloved husky-malinois, Lucy, to either the park or the trails to run. 
-        </p>
-
-        <p>
-            Words are much harder than numbers, in my opinion. I’m a much better analyst than writer, and I hope my site is evidence of this.
-        </p>
-            
-            <div class="cta-area">
-                <a href="/projects" class="cta-button">Explore Projects</a>
-                <a href="/blog" class="cta-secondary">Read My Thoughts</a>
+        <div class="home-projects">
+            <span class="section-label">Projects</span>
+            <div class="project-tiles">
+                {% for project in projects %}
+                <a href="{{ project.link }}" class="project-tile" data-aos="fade-up">
+                    <span class="post-title project-title">{{ project.title }}</span>
+                    <p class="post-description">{{ project.description }}</p>
+                </a>
+                {% endfor %}
             </div>
         </div>
     </div>

@@ -7,16 +7,25 @@ from CDC_Review import get_cancer_dashboard_data
 app = Flask(__name__)
 
 
-# Projects page route
-@app.route("/projects")
-def projects():
+def load_projects():
     json_path = os.path.join(app.root_path, 'projects.json')
     try:
         with open(json_path, 'r') as f:
-            project_data = json.load(f)
+            return json.load(f)
     except FileNotFoundError:
-        project_data = []
-    return render_template("projects.html", projects=project_data)
+        return []
+
+
+# Home page route
+@app.route("/")
+def home():
+    return render_template("index.html", projects=load_projects())
+
+
+# Projects page route
+@app.route("/projects")
+def projects():
+    return render_template("projects.html", projects=load_projects())
 
 
 # BLOG ROUTES - Must come BEFORE the catch-all route
@@ -52,7 +61,6 @@ def blog_post(post_id):
 
 
 # Dynamic page routing - This MUST be last since it's a catch-all
-@app.route("/", defaults={"page": "index"})
 @app.route("/<page>")
 def render_page(page):
     try:

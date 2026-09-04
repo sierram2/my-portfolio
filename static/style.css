@@ -17,6 +17,7 @@
   --font-serif: 'Futura';
   --font-sans:  'Futura PT', 'Futura', 'Century Gothic', Trebuchet MS, sans-serif;
   --font-sans-bold:  'Futura PT', 'Futura', 'Century Gothic', Trebuchet MS, sans-serif;
+}
 
 /* ===== RESET & BASE ===== */
 *, *::before, *::after {
@@ -141,6 +142,10 @@ a:hover {
   text-decoration: underline;
 }
 
+#contact-link {
+  font-size: 34px;
+}
+
 /* ===== TYPOGRAPHY HIERARCHY ===== */
 /* h1: 46px  |  h2: 33px  |  h3: 26px  |  body: 22.5px */
 
@@ -207,6 +212,73 @@ p {
   line-height: 1.6;
 }
 .hero-description strong { font-weight: bold; }
+
+/* ===== HOME — about (left) / project tiles (right) ===== */
+.home-columns {
+  display: flex;
+  align-items: flex-start;
+  gap: 60px;
+}
+
+.home-about {
+  flex: 1 1 60%;
+  min-width: 0;
+}
+
+.home-projects {
+  flex: 1 1 40%;
+  min-width: 0;
+  position: sticky;
+  top: 100px;
+}
+
+.project-tiles {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.project-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: 2px;
+  transition: background 0.15s ease;
+}
+.project-tile:hover {
+  background-color: var(--hover-bg);
+  text-decoration: none;
+}
+.project-tile:hover .project-title {
+  text-decoration: underline;
+  color: var(--visited);
+}
+.project-tile .project-title {
+  font-size: 22.5px;
+  color: var(--black);
+  font-weight: normal;
+}
+.project-tile .post-description {
+  font-size: 18px;
+  color: #444;
+  line-height: 1.5;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .home-columns {
+    flex-direction: column;
+  }
+  .home-projects {
+    position: static;
+    width: 100%;
+  }
+}
 
 /* ===== SECTION LABELS ===== */
 .section-label {
