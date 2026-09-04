@@ -57,7 +57,10 @@ def cancer_analysis():
 
 @app.route("/blog/<post_id>")
 def blog_post(post_id):
-    return render_template(f"blog/{post_id}.html")
+    try:
+        return render_template(f"blog/{post_id}.html")
+    except Exception:
+        return render_template("404.html"), 404
 
 
 # Dynamic page routing - This MUST be last since it's a catch-all
