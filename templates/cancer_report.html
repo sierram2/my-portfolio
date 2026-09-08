@@ -24,7 +24,6 @@
         backdrop-filter: var(--glass-blur);
         -webkit-backdrop-filter: var(--glass-blur);
         padding: 28px;
-        border-radius: 2px;
         margin-bottom: 28px;
     }
 
@@ -61,7 +60,6 @@
         top: 21px;
         width: 8px;
         height: 8px;
-        border-radius: 50%;
         background: var(--red);
     }
 
@@ -113,7 +111,6 @@
         -webkit-backdrop-filter: var(--glass-blur);
         padding: 28px;
         border-left: 3px solid var(--red);
-        border-radius: 2px;
         color: #0a0a0a;
     }
 
@@ -128,10 +125,13 @@
         padding: 10px 14px;
         font-family: var(--font-sans);
         font-size: 16px;
-        border: 1px solid rgba(0,0,0,0.2);
-        border-radius: 2px;
+        border: none;
         background: #fff;
         color: #0a0a0a;
+    }
+    .county-search-row input:focus {
+        outline: 2px solid var(--black);
+        outline-offset: -2px;
     }
 
     .county-search-row button {
@@ -139,7 +139,6 @@
         font-family: var(--font-sans);
         font-size: 16px;
         border: none;
-        border-radius: 2px;
         background: var(--red);
         color: #fff;
         cursor: pointer;
@@ -152,8 +151,6 @@
     .county-result-card {
         margin-top: 18px;
         padding: 18px;
-        border: 1px solid rgba(0,0,0,0.08);
-        border-radius: 2px;
         background: rgba(255,255,255,0.5);
         color: #0a0a0a;
         font-family: var(--font-sans);
