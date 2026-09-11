@@ -16,5 +16,11 @@
     "title": "Cancer Data Analysis",
     "description": "Statistical analysis exploring cancer trends and patterns.",
     "link": "/blog/cancer_report"
+  },
+  {
+    "id": 4,
+    "title": "Heart Disease Data Analysis",
+    "description": "County-level coronary heart disease prevalence and statewide mortality trends for heart attack, ischemic heart disease, and stroke.",
+    "link": "/blog/heart_report"
   }
 ]

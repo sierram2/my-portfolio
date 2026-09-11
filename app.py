@@ -3,6 +3,7 @@ import json
 import os
 
 from CDC_Review import get_cancer_dashboard_data
+from CDC_Heart_Review import get_heart_dashboard_data
 
 app = Flask(__name__)
 
@@ -53,6 +54,20 @@ def cancer_analysis():
         return render_template("cancer_report.html", data=data, error=None)
     except Exception as e:
         return render_template("cancer_report.html", data=None, error=str(e))
+
+
+# Heart disease & stroke data dashboard — pulls live from
+# CDC_Heart_Review.py (CDC EPHTN API), cached for an hour inside
+# get_heart_dashboard_data(). Same fallback pattern as the cancer
+# dashboard above: on failure, render the same template with error set
+# instead of data.
+@app.route("/blog/heart_report")
+def heart_analysis():
+    try:
+        data = get_heart_dashboard_data()
+        return render_template("heart_report.html", data=data, error=None)
+    except Exception as e:
+        return render_template("heart_report.html", data=None, error=str(e))
 
 
 @app.route("/blog/<post_id>")
